@@ -79,12 +79,13 @@ export default function PhysicsLetter({
       const offset = firstWordWidth + spaceWidth
       resetX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + offset + (index - 5) * (letterSize + spacing)
     }
-    const resetY = containerHeight * 0.1
+    // Better vertical positioning on mobile (centered) vs desktop (top)
+    const resetY = isMobile ? containerHeight * 0.15 : containerHeight * 0.1
     
     x.set(resetX)
     y.set(resetY)
     setVelocity({ x: 0, y: 0 })
-  }, [containerWidth, containerHeight, index, x, y]) // Reset when container size changes
+  }, [containerWidth, containerHeight, index, x, y, isMobile, letterSize, spacing, spaceWidth]) // Reset when container size changes
   
   // Jiggle animation when not dragging (disabled on mobile to keep letters in order)
   useEffect(() => {
