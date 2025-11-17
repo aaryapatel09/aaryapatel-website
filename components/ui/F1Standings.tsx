@@ -18,9 +18,8 @@ interface ConstructorStanding {
   change: number
 }
 
-// Ergast F1 API - Free, no API key required
-// Using CORS proxy for browser compatibility
-const ERGAST_API = 'https://ergast.com/api/f1'
+// F1 data is fetched via Next.js API route at /api/f1-standings
+// This bypasses CORS issues by making server-side requests
 
 // Map Ergast team names to display names
 const teamNameMap: Record<string, string> = {
@@ -52,7 +51,7 @@ export default function F1Standings() {
   const previousDriversRef = useRef<DriverStanding[]>([])
   const previousConstructorsRef = useRef<ConstructorStanding[]>([])
 
-  // Fetch real F1 data from Ergast API
+  // Fetch real F1 data from Ergast API via Next.js API route (bypasses CORS)
   useEffect(() => {
     const fetchF1Data = async () => {
       try {
@@ -62,28 +61,18 @@ export default function F1Standings() {
         // Get current year
         const currentYear = new Date().getFullYear()
 
-        // Fetch driver standings
+        // Fetch driver standings via API route
         const driversResponse = await fetch(
-          `${ERGAST_API}/${currentYear}/driverStandings.json?limit=20`,
-          {
-            headers: {
-              'Accept': 'application/json',
-            },
-          }
+          `/api/f1-standings?type=drivers&year=${currentYear}`
         )
         if (!driversResponse.ok) {
           throw new Error('Failed to fetch driver standings')
         }
         const driversData = await driversResponse.json()
 
-        // Fetch constructor standings
+        // Fetch constructor standings via API route
         const constructorsResponse = await fetch(
-          `${ERGAST_API}/${currentYear}/constructorStandings.json?limit=20`,
-          {
-            headers: {
-              'Accept': 'application/json',
-            },
-          }
+          `/api/f1-standings?type=constructors&year=${currentYear}`
         )
         if (!constructorsResponse.ok) {
           throw new Error('Failed to fetch constructor standings')
