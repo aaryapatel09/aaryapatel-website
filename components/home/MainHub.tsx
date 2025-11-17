@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/store/useStore'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+import F1Standings from '@/components/ui/F1Standings'
 
 interface HubIcon {
   id: string
@@ -129,22 +130,25 @@ export default function MainHub() {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Title */}
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-bold mb-6 tracking-tight">
-            WELCOME
-          </h1>
-          <p className="text-2xl md:text-3xl lg:text-4xl text-gray-400 font-mono">
-            Explore my work
-          </p>
-        </motion.div>
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          {/* Main Content - Icon Grid */}
+          <div className="flex-1">
+            {/* Title */}
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="text-center mb-16"
+            >
+              <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-bold mb-6 tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                WELCOME
+              </h1>
+              <p className="text-2xl md:text-3xl lg:text-4xl font-mono" style={{ color: 'var(--text-secondary)' }}>
+                Explore my work
+              </p>
+            </motion.div>
 
-        {/* Icon Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
+            {/* Icon Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
           {icons.map((icon, index) => (
             <motion.div
               key={icon.id}
@@ -256,11 +260,15 @@ export default function MainHub() {
                     </div>
 
                     {/* Bottom section - Text (always visible) */}
-                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-2">
+                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-4">
                       {/* Title */}
                       <motion.h2
-                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-white text-center w-full"
-                        style={{ color: 'var(--text-primary)' }}
+                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-center"
+                        style={{ 
+                          color: 'var(--text-primary)',
+                          textAlign: 'center',
+                          width: '100%',
+                        }}
                         animate={{
                           scale: hoveredIcon === icon.id ? 1.05 : 1,
                         }}
@@ -270,8 +278,12 @@ export default function MainHub() {
 
                       {/* Description */}
                       <motion.p
-                        className="text-sm md:text-base lg:text-lg font-mono text-center w-full"
-                        style={{ color: 'var(--text-secondary)' }}
+                        className="text-sm md:text-base lg:text-lg font-mono text-center"
+                        style={{ 
+                          color: 'var(--text-secondary)',
+                          textAlign: 'center',
+                          width: '100%',
+                        }}
                         animate={{
                           opacity: hoveredIcon === icon.id ? 1 : 0.8,
                         }}
@@ -315,19 +327,31 @@ export default function MainHub() {
               </Link>
             </motion.div>
           ))}
-        </div>
+            </div>
 
-        {/* Fun interactive elements */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mt-16 text-center"
-        >
-          <p className="text-gray-400 text-sm font-mono">
-            Hover and click to explore
-          </p>
-        </motion.div>
+            {/* Fun interactive elements */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="mt-16 text-center"
+            >
+              <p className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>
+                Hover and click to explore
+              </p>
+            </motion.div>
+          </div>
+
+          {/* F1 Standings Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+            className="lg:sticky lg:top-24 h-fit"
+          >
+            <F1Standings />
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   )
