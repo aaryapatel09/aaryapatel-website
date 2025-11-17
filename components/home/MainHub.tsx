@@ -233,7 +233,11 @@ export default function MainHub() {
                     )}
 
                     {/* Top section - Icon */}
-                    <div className="flex-1 flex items-center justify-center relative z-10 w-full min-h-[140px] md:min-h-[180px] lg:min-h-[220px]">
+                    <div className={`flex-1 flex items-center justify-center relative z-10 w-full ${
+                      icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
+                        ? 'min-h-[180px] md:min-h-[240px] lg:min-h-[280px]'
+                        : 'min-h-[140px] md:min-h-[180px] lg:min-h-[220px]'
+                    }`}>
                       <motion.div
                         className="flex items-center justify-center w-full"
                         animate={{
@@ -247,11 +251,19 @@ export default function MainHub() {
                           <Image
                             src={icon.image}
                             alt={icon.title}
-                            width={288}
-                            height={288}
-                            className="w-40 h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 object-contain"
+                            width={400}
+                            height={400}
+                            className={
+                              icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
+                                ? 'w-56 h-56 md:w-72 md:h-72 lg:w-96 lg:h-96 object-contain'
+                                : 'w-40 h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 object-contain'
+                            }
                             onError={() => handleImageError(icon.id)}
-                            sizes="(max-width: 768px) 160px, (max-width: 1024px) 208px, 256px"
+                            sizes={
+                              icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
+                                ? '(max-width: 768px) 224px, (max-width: 1024px) 288px, 384px'
+                                : '(max-width: 768px) 160px, (max-width: 1024px) 208px, 256px'
+                            }
                           />
                         ) : icon.emoji ? (
                           <span className="text-7xl md:text-9xl lg:text-[10rem]">{icon.emoji}</span>
@@ -268,6 +280,10 @@ export default function MainHub() {
                           color: 'var(--text-primary)',
                           textAlign: 'center',
                           width: '100%',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          letterSpacing: (icon.id === 'portfolio' || icon.id === 'gallery') ? '0.05em' : 'normal',
                         }}
                         animate={{
                           scale: hoveredIcon === icon.id ? 1.05 : 1,
