@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import PhysicsName from '@/components/ui/PhysicsName'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 interface CarLandingProps {
   onEnter: () => void
@@ -72,6 +73,10 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
       style={{ backgroundColor: 'var(--bg-primary)' }}
       onClick={handleClick}
     >
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-6 right-6 z-30" onClick={(e) => e.stopPropagation()}>
+        <ThemeToggle />
+      </div>
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (

@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   title: 'Aarya Patel | F1 Engineering & Software',
   description: 'Interactive portfolio showcasing Formula 1 engineering, software development, and powertrain design',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/icon.ico',
+    shortcut: '/icon.ico',
+    apple: '/icon.ico',
   },
 }
 

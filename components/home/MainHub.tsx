@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/store/useStore'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 interface HubIcon {
   id: string
@@ -80,6 +81,10 @@ export default function MainHub() {
           className="min-h-screen pt-24 pb-12 relative overflow-hidden"
           style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
         >
+          {/* Theme Toggle - Top Right */}
+          <div className="absolute top-6 right-6 z-30">
+            <ThemeToggle />
+          </div>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating particles */}
@@ -251,10 +256,11 @@ export default function MainHub() {
                     </div>
 
                     {/* Bottom section - Text (always visible) */}
-                    <div className="relative z-10 w-full text-center space-y-2">
+                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-2">
                       {/* Title */}
                       <motion.h2
-                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-white"
+                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-white text-center w-full"
+                        style={{ color: 'var(--text-primary)' }}
                         animate={{
                           scale: hoveredIcon === icon.id ? 1.05 : 1,
                         }}
@@ -264,7 +270,8 @@ export default function MainHub() {
 
                       {/* Description */}
                       <motion.p
-                        className="text-sm md:text-base lg:text-lg text-gray-300 font-mono"
+                        className="text-sm md:text-base lg:text-lg font-mono text-center w-full"
+                        style={{ color: 'var(--text-secondary)' }}
                         animate={{
                           opacity: hoveredIcon === icon.id ? 1 : 0.8,
                         }}
