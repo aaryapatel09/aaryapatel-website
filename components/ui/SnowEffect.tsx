@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 interface Snowflake {
   id: number
@@ -213,8 +214,8 @@ export default function SnowEffect() {
         <motion.div
           className="fixed pointer-events-none z-50"
           style={{
-            left: mousePos.x - 20,
-            top: mousePos.y - 20,
+            left: mousePos.x - 30,
+            top: mousePos.y - 30,
             mixBlendMode: 'normal',
           }}
           animate={{
@@ -223,7 +224,14 @@ export default function SnowEffect() {
           }}
           transition={{ duration: 0.3 }}
         >
-          <span className="text-4xl drop-shadow-lg">⛏️</span>
+          <Image
+            src="/images/shovel-cursor.png"
+            alt="Shovel"
+            width={60}
+            height={60}
+            className="drop-shadow-lg"
+            style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))' }}
+          />
         </motion.div>
       )}
     </>
