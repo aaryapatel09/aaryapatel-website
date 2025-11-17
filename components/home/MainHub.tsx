@@ -6,7 +6,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/store/useStore'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-// import SnowEffect from '@/components/ui/SnowEffect'
 
 interface HubIcon {
   id: string
@@ -76,19 +75,16 @@ export default function MainHub() {
   ]
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen pt-24 pb-12 relative overflow-hidden"
-      style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-    >
-      {/* Snow Effect */}
-      {/* <SnowEffect /> */}
-      
-      {/* Theme Toggle - Top Right */}
-      <div className="absolute top-6 right-6 z-30">
-        <ThemeToggle />
-      </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen pt-24 pb-12 relative overflow-hidden"
+          style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+        >
+          {/* Theme Toggle - Top Right */}
+          <div className="absolute top-6 right-6 z-30">
+            <ThemeToggle />
+          </div>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating particles */}
@@ -133,25 +129,22 @@ export default function MainHub() {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-          {/* Main Content - Icon Grid */}
-          <div className="flex-1">
-            {/* Title */}
-            <motion.div
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="text-center mb-16"
-            >
-              <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-bold mb-6 tracking-tight" style={{ color: 'var(--text-primary)' }}>
-                WELCOME
-              </h1>
-              <p className="text-2xl md:text-3xl lg:text-4xl font-mono" style={{ color: 'var(--text-secondary)' }}>
-                Explore my work
-              </p>
-            </motion.div>
+        {/* Title */}
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-center mb-16"
+        >
+          <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-bold mb-6 tracking-tight">
+            WELCOME
+          </h1>
+          <p className="text-2xl md:text-3xl lg:text-4xl text-gray-400 font-mono">
+            Explore my work
+          </p>
+        </motion.div>
 
-            {/* Icon Grid - Wider rectangles */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
+        {/* Icon Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
           {icons.map((icon, index) => (
             <motion.div
               key={icon.id}
@@ -174,9 +167,9 @@ export default function MainHub() {
                 className="block"
               >
                 <div className="relative group">
-                  {/* Icon Container - Wider rectangle */}
+                  {/* Icon Container */}
                   <motion.div
-                    className="relative h-64 md:h-80 lg:h-96 rounded-2xl p-6 md:p-8 lg:p-10 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer min-w-[200px]"
+                    className="relative h-72 md:h-96 lg:h-[28rem] rounded-2xl p-6 md:p-8 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: hoveredIcon === icon.id 
@@ -236,16 +229,12 @@ export default function MainHub() {
                     )}
 
                     {/* Top section - Icon */}
-                    <div className={`flex-1 flex items-center justify-center relative z-10 w-full ${
-                      icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
-                        ? 'min-h-[220px] md:min-h-[280px] lg:min-h-[340px]'
-                        : 'min-h-[200px] md:min-h-[260px] lg:min-h-[320px]'
-                    }`}>
+                    <div className="flex-1 flex items-center justify-center relative z-10 w-full">
                       <motion.div
-                        className="flex items-center justify-center w-full"
+                        className="flex items-center justify-center"
                         animate={{
                           rotate: hoveredIcon === icon.id ? [0, 15, -15, 10, -10, 0] : 0,
-                          scale: hoveredIcon === icon.id ? 1.15 : 1,
+                          scale: hoveredIcon === icon.id ? 1.2 : 1,
                           y: hoveredIcon === icon.id ? [-8, 8, -8, 0] : 0,
                         }}
                         transition={{ duration: 0.6, type: 'spring' }}
@@ -254,62 +243,59 @@ export default function MainHub() {
                           <Image
                             src={icon.image}
                             alt={icon.title}
-                            width={400}
-                            height={400}
-                            className={
-                              icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
-                                ? 'w-64 h-64 md:w-80 md:h-80 lg:w-[28rem] lg:h-[28rem] object-contain'
-                                : 'w-56 h-56 md:w-72 md:h-72 lg:w-96 lg:h-96 object-contain'
-                            }
+                            width={288}
+                            height={288}
+                            className="w-36 h-36 md:w-56 md:h-56 lg:w-72 lg:h-72 object-contain"
                             onError={() => handleImageError(icon.id)}
-                            sizes={
-                              icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
-                                ? '(max-width: 768px) 256px, (max-width: 1024px) 320px, 448px'
-                                : '(max-width: 768px) 224px, (max-width: 1024px) 288px, 384px'
-                            }
+                            sizes="(max-width: 768px) 144px, (max-width: 1024px) 224px, 288px"
                           />
                         ) : icon.emoji ? (
-                          <span className="text-7xl md:text-9xl lg:text-[10rem]">{icon.emoji}</span>
+                          <span className="text-7xl md:text-[8rem] lg:text-[10rem]">{icon.emoji}</span>
                         ) : null}
                       </motion.div>
                     </div>
 
                     {/* Bottom section - Text (always visible) */}
-                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-4 py-2">
+                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-2 pb-2">
                       {/* Title */}
-                      <motion.h2
-                        className="text-xl md:text-2xl lg:text-3xl font-bold"
-                        style={{ 
-                          color: 'var(--text-primary)',
-                          textAlign: 'center',
-                          width: '100%',
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          letterSpacing: (icon.id === 'portfolio' || icon.id === 'gallery') ? '0.05em' : 'normal',
-                        }}
-                        animate={{
-                          scale: hoveredIcon === icon.id ? 1.05 : 1,
-                        }}
-                      >
-                        {icon.title}
-                      </motion.h2>
+                      <div className="w-full flex items-center justify-center">
+                        <motion.h2
+                          className="text-2xl md:text-3xl lg:text-4xl font-bold"
+                          style={{ 
+                            color: 'var(--text-primary)',
+                            textAlign: 'center',
+                            margin: '0 auto',
+                            padding: 0,
+                            letterSpacing: 'normal',
+                            width: '100%',
+                          }}
+                          animate={{
+                            scale: hoveredIcon === icon.id ? 1.05 : 1,
+                          }}
+                        >
+                          {icon.title}
+                        </motion.h2>
+                      </div>
 
                       {/* Description */}
-                      <motion.p
-                        className="text-xs md:text-sm lg:text-base font-mono"
-                        style={{ 
-                          color: 'var(--text-secondary)',
-                          textAlign: 'center',
-                          width: '100%',
-                          lineHeight: '1.4',
-                        }}
-                        animate={{
-                          opacity: hoveredIcon === icon.id ? 1 : 0.8,
-                        }}
-                      >
-                        {icon.description}
-                      </motion.p>
+                      <div className="w-full flex items-center justify-center">
+                        <motion.p
+                          className="text-sm md:text-base lg:text-lg font-mono"
+                          style={{ 
+                            color: 'var(--text-secondary)',
+                            textAlign: 'center',
+                            margin: '0 auto',
+                            padding: 0,
+                            letterSpacing: 'normal',
+                            width: '100%',
+                          }}
+                          animate={{
+                            opacity: hoveredIcon === icon.id ? 1 : 0.8,
+                          }}
+                        >
+                          {icon.description}
+                        </motion.p>
+                      </div>
                     </div>
 
                     {/* Hover glow effect */}
@@ -347,52 +333,19 @@ export default function MainHub() {
               </Link>
             </motion.div>
           ))}
-            </div>
-
-            {/* Fun interactive elements */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="mt-16 text-center"
-            >
-              <p className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>
-                Hover and click to explore
-              </p>
-            </motion.div>
-          </div>
-
-          {/* F1 Standings Coming Soon */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="lg:sticky lg:top-24 h-fit"
-          >
-            <div className="p-6 rounded-lg border backdrop-blur-sm" style={{ 
-              backgroundColor: 'var(--bg-secondary)', 
-              borderColor: 'var(--border-color)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-            }}>
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center"
-              >
-                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse mx-auto mb-4" />
-                <h2 className="text-xl font-racing tracking-wider mb-2" style={{ color: 'var(--text-primary)' }}>
-                  LIVE STANDINGS
-                </h2>
-                <p className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>
-                  Drivers & Constructors
-                </p>
-                <p className="text-xs font-mono mt-4 opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                  Coming Soon
-                </p>
-              </motion.div>
-            </div>
-          </motion.div>
         </div>
+
+        {/* Fun interactive elements */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-16 text-center"
+        >
+          <p className="text-gray-400 text-sm font-mono">
+            Hover and click to explore
+          </p>
+        </motion.div>
       </div>
     </motion.div>
   )
