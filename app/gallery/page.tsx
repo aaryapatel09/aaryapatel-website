@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 import DashboardCard from '@/components/ui/DashboardCard'
 import { useStore } from '@/store/useStore'
 import { sanityClient, galleryItemsQuery } from '@/lib/sanity'
@@ -168,12 +169,14 @@ export default function GalleryPage() {
                   className="cursor-pointer"
                 >
                   <DashboardCard className="h-full interactive-element">
-                    <div className="aspect-video bg-white mb-4 flex items-center justify-center border-2 border-white/20">
+                    <div className="aspect-video bg-white mb-4 flex items-center justify-center border-2 border-white/20 relative">
                       {item.image ? (
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       ) : (
                         <div className="text-black/30 text-sm font-mono">

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { sanityClient, postBySlugQuery } from '@/lib/sanity'
 import { format } from 'date-fns'
 import { poetryContent } from '@/lib/poetry'
@@ -134,11 +135,13 @@ export default function BlogPostPage() {
           </div>
 
           {post.mainImage && (
-            <div className="mb-8 aspect-video bg-white/10">
-              <img
+            <div className="mb-8 aspect-video bg-white/10 relative">
+              <Image
                 src={post.mainImage}
                 alt={post.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               />
             </div>
           )}

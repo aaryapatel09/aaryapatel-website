@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useStore } from '@/store/useStore'
 import RacingLineSVG from '@/components/ui/RacingLineSVG'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 const navItems = [
   { name: 'Home', path: '/', id: 'home' },
@@ -69,27 +70,35 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden p-2 interactive-element"
-            aria-label="Toggle menu"
-          >
-            <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
-              <motion.span
-                animate={isMenuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-                className="block h-0.5 w-full bg-f1-light"
-              />
-              <motion.span
-                animate={isMenuOpen ? { opacity: 0 } : { opacity: 1 }}
-                className="block h-0.5 w-full bg-f1-light"
-              />
-              <motion.span
-                animate={isMenuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-                className="block h-0.5 w-full bg-f1-light"
-              />
-            </div>
-          </button>
+          {/* Theme Toggle */}
+          <div className="hidden md:block">
+            <ThemeToggle />
+          </div>
+
+          {/* Mobile Menu Button and Theme Toggle */}
+          <div className="md:hidden flex items-center gap-3">
+            <ThemeToggle />
+            <button
+              onClick={toggleMenu}
+              className="p-2 interactive-element"
+              aria-label="Toggle menu"
+            >
+              <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
+                <motion.span
+                  animate={isMenuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                  className="block h-0.5 w-full bg-f1-light"
+                />
+                <motion.span
+                  animate={isMenuOpen ? { opacity: 0 } : { opacity: 1 }}
+                  className="block h-0.5 w-full bg-f1-light"
+                />
+                <motion.span
+                  animate={isMenuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+                  className="block h-0.5 w-full bg-f1-light"
+                />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -5,6 +5,28 @@
 :root {
   --font-racing: 'Courier New', monospace;
   --font-mono: 'Courier New', monospace;
+  
+  /* Dark theme (default) */
+  --bg-primary: #000000;
+  --bg-secondary: #111111;
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --scrollbar-track: #000000;
+  --scrollbar-thumb: #FFFFFF;
+  --scrollbar-thumb-hover: #CCCCCC;
+}
+
+:root.light {
+  /* Light theme */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --border-color: rgba(0, 0, 0, 0.2);
+  --scrollbar-track: #F5F5F5;
+  --scrollbar-thumb: #000000;
+  --scrollbar-thumb-hover: #333333;
 }
 
 * {
@@ -17,15 +39,16 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: #000000;
-  color: #FFFFFF;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: var(--font-mono);
   cursor: none !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
-  background: #000000;
-  color: #FFFFFF;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 /* Hide default cursor everywhere */
@@ -44,16 +67,16 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FFFFFF;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #CCCCCC;
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Racing line animation */

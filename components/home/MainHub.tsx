@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useStore } from '@/store/useStore'
 
 interface HubIcon {
@@ -73,11 +74,12 @@ export default function MainHub() {
   ]
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-black text-white pt-24 pb-12 relative overflow-hidden"
-    >
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen pt-24 pb-12 relative overflow-hidden"
+          style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+        >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating particles */}
@@ -162,12 +164,17 @@ export default function MainHub() {
                 <div className="relative group">
                   {/* Icon Container */}
                   <motion.div
-                    className="relative h-72 md:h-96 lg:h-[28rem] rounded-2xl bg-black p-6 md:p-8 flex flex-col items-center justify-between border-4 border-white overflow-hidden cursor-pointer"
+                    className="relative h-72 md:h-96 lg:h-[28rem] rounded-2xl p-6 md:p-8 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      borderColor: hoveredIcon === icon.id 
+                        ? 'var(--text-primary)' 
+                        : 'var(--border-color)',
+                    }}
                     animate={{
                       boxShadow: hoveredIcon === icon.id
                         ? '0 0 60px rgba(255, 255, 255, 0.8), 0 0 100px rgba(255, 255, 255, 0.4), inset 0 0 50px rgba(255, 255, 255, 0.1)'
                         : '0 0 0px rgba(255, 255, 255, 0)',
-                      borderColor: hoveredIcon === icon.id ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.5)',
                     }}
                   >
                     {/* Animated grid pattern */}
@@ -228,11 +235,14 @@ export default function MainHub() {
                         transition={{ duration: 0.6, type: 'spring' }}
                       >
                         {icon.image && !imageErrors[icon.id] ? (
-                          <img
+                          <Image
                             src={icon.image}
                             alt={icon.title}
+                            width={288}
+                            height={288}
                             className="w-36 h-36 md:w-56 md:h-56 lg:w-72 lg:h-72 object-contain"
                             onError={() => handleImageError(icon.id)}
+                            sizes="(max-width: 768px) 144px, (max-width: 1024px) 224px, 288px"
                           />
                         ) : icon.emoji ? (
                           <span className="text-7xl md:text-[8rem] lg:text-[10rem]">{icon.emoji}</span>

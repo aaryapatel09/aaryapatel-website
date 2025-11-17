@@ -68,7 +68,8 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
       animate={{ opacity: isExiting ? 0 : 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.8, ease: 'easeInOut' }}
-      className="relative w-full h-screen flex items-center justify-center bg-black overflow-hidden cursor-none"
+      className="relative w-full h-screen flex items-center justify-center overflow-hidden cursor-none"
+      style={{ backgroundColor: 'var(--bg-primary)' }}
       onClick={handleClick}
     >
       {/* Animated background particles */}
