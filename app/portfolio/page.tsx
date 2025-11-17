@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import DashboardCard from '@/components/ui/DashboardCard'
 import { useStore } from '@/store/useStore'
@@ -19,10 +19,57 @@ export default function PortfolioPage() {
   const { setCurrentSection } = useStore()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [isScrolling, setIsScrolling] = useState(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const lastTouchY = useRef<number>(0)
 
   useEffect(() => {
     setCurrentSection('portfolio')
   }, [setCurrentSection])
+
+  // Prevent clicks during scroll on mobile
+  useEffect(() => {
+    let scrollTimer: NodeJS.Timeout | null = null
+
+    const handleScroll = () => {
+      setIsScrolling(true)
+      if (scrollTimer) clearTimeout(scrollTimer)
+      scrollTimer = setTimeout(() => {
+        setIsScrolling(false)
+      }, 150) // Wait 150ms after scrolling stops
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      lastTouchY.current = e.touches[0].clientY
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const currentY = e.touches[0].clientY
+      const deltaY = Math.abs(currentY - lastTouchY.current)
+      
+      if (deltaY > 5) {
+        // User is scrolling
+        setIsScrolling(true)
+        if (scrollTimer) clearTimeout(scrollTimer)
+        scrollTimer = setTimeout(() => {
+          setIsScrolling(false)
+        }, 150)
+      }
+      
+      lastTouchY.current = currentY
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      if (scrollTimer) clearTimeout(scrollTimer)
+    }
+  }, [])
 
   const projects: Project[] = [
     {
@@ -146,7 +193,14 @@ export default function PortfolioPage() {
                 whileHover={{ y: -8 }}
                 whileTap={{ scale: 0.98 }}
                 className="cursor-grab active:cursor-grabbing"
-                onClick={() => {
+                onClick={(e) => {
+                  // Prevent click if user was just scrolling
+                  if (isScrolling) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    return
+                  }
+                  
                   // Open project GitHub repository
                   const project = filteredProjects[index]
                   if (project.githubUrl) {

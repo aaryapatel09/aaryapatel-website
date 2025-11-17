@@ -6,6 +6,7 @@ import Image from 'next/image'
 
 export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const hasMovedRef = useRef(false)
   const [hasMoved, setHasMoved] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
@@ -17,6 +18,16 @@ export default function CustomCursor() {
   const cursorYSpring = useSpring(cursorY, springConfig)
 
   useEffect(() => {
+    // Check if device is mobile/touch device
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const isSmallScreen = window.innerWidth < 768
+      setIsMobile(isTouchDevice || isSmallScreen)
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX - 20) // Offset by half the cursor size (40px / 2)
       cursorY.set(e.clientY - 20)
@@ -46,18 +57,29 @@ export default function CustomCursor() {
       }
     }
 
-    window.addEventListener('mousemove', moveCursor)
-    window.addEventListener('mouseenter', handleMouseEnter)
-    window.addEventListener('mouseleave', handleMouseLeave)
-    window.addEventListener('mouseover', handleMouseOver)
+    // Only add mouse event listeners on non-mobile devices
+    if (!isMobile) {
+      window.addEventListener('mousemove', moveCursor)
+      window.addEventListener('mouseenter', handleMouseEnter)
+      window.addEventListener('mouseleave', handleMouseLeave)
+      window.addEventListener('mouseover', handleMouseOver)
+    }
 
     return () => {
-      window.removeEventListener('mousemove', moveCursor)
-      window.removeEventListener('mouseenter', handleMouseEnter)
-      window.removeEventListener('mouseleave', handleMouseLeave)
-      window.removeEventListener('mouseover', handleMouseOver)
+      window.removeEventListener('resize', checkMobile)
+      if (!isMobile) {
+        window.removeEventListener('mousemove', moveCursor)
+        window.removeEventListener('mouseenter', handleMouseEnter)
+        window.removeEventListener('mouseleave', handleMouseLeave)
+        window.removeEventListener('mouseover', handleMouseOver)
+      }
     }
-  }, [cursorX, cursorY])
+  }, [cursorX, cursorY, isMobile])
+
+  // Don't render cursor on mobile
+  if (isMobile) {
+    return null
+  }
 
   return (
     <motion.div

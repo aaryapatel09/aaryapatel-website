@@ -72,17 +72,21 @@ export default function PhysicsLetter({
     setVelocity({ x: 0, y: 0 })
   }, [containerWidth, containerHeight, index, x, y]) // Reset when container size changes
   
-  // Jiggle animation when not dragging
+  // Jiggle animation when not dragging (reduced on mobile)
   useEffect(() => {
     if (isDragging) return
     
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    const jiggleAmount = isMobile ? 1 : 4 // Much less jiggle on mobile
+    const jiggleInterval = isMobile ? 4000 + Math.random() * 4000 : 2000 + Math.random() * 2000 // Less frequent on mobile
+    
     const interval = setInterval(() => {
-      const jiggleX = (Math.random() - 0.5) * 4
-      const jiggleY = (Math.random() - 0.5) * 4
+      const jiggleX = (Math.random() - 0.5) * jiggleAmount
+      const jiggleY = (Math.random() - 0.5) * jiggleAmount
       
       x.set(x.get() + jiggleX)
       y.set(y.get() + jiggleY)
-    }, 2000 + Math.random() * 2000)
+    }, jiggleInterval)
     
     return () => clearInterval(interval)
   }, [isDragging, x, y])
