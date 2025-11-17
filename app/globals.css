@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-racing: 'Courier New', monospace;
+  --font-mono: 'Courier New', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: #000000;
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  cursor: none !important;
+}
+
+body {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+/* Hide default cursor everywhere */
+* {
+  cursor: none !important;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFFFFF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #CCCCCC;
+}
+
+/* Racing line animation */
+@keyframes racing-line {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.racing-line {
+  stroke-dasharray: 1000;
+  animation: racing-line 3s linear infinite;
+}
+
+/* Telemetry pulse */
+@keyframes telemetry-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.telemetry-pulse {
+  animation: telemetry-pulse 2s ease-in-out infinite;
+}
+
+/* Dashboard glow */
+.dashboard-glow {
+  text-shadow: 0 0 10px #FFFFFF, 0 0 20px #FFFFFF, 0 0 30px #FFFFFF;
+}
+
+/* Interactive hover effects */
+.interactive-element {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.interactive-element:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
+
+/* No selection for UI elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
