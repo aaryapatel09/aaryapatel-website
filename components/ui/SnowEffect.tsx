@@ -213,7 +213,6 @@ export default function SnowEffect() {
             const x = e.clientX - rect.left
             const y = e.clientY - rect.top
             const height = container.offsetHeight
-            handleMouseMove({ clientX: e.clientX, clientY: e.clientY } as React.MouseEvent<HTMLCanvasElement>)
             setMousePos({ x, y })
             setIsHoveringSnow(y > height - 150)
           }}
