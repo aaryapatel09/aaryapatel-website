@@ -43,23 +43,37 @@ export default function PhysicsLetter({
   const spacing = isMobile ? 8 : 15
   const spaceWidth = isMobile ? 20 : 40 // Width of space between words
   
-  // Calculate initial positions accounting for space in "AARYA PATEL"
-  // "AARYA" = 5 letters, then space, then "PATEL" = 5 letters
+  // Calculate initial positions
   let initialX: number
-  if (index < 5) {
-    // First word "AARYA" (indices 0-4)
+  let initialY: number
+  
+  if (isMobile) {
+    // On mobile: stack "AARYA" and "PATEL" vertically (two lines)
     const firstWordWidth = 5 * (letterSize + spacing) - spacing
-    initialX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + index * (letterSize + spacing)
+    if (index < 5) {
+      // First word "AARYA" (indices 0-4) - top line
+      initialX = containerWidth / 2 - firstWordWidth / 2 + index * (letterSize + spacing)
+      initialY = containerHeight * 0.15
+    } else {
+      // Second word "PATEL" (indices 5-9) - bottom line
+      const secondWordWidth = 5 * (letterSize + spacing) - spacing
+      initialX = containerWidth / 2 - secondWordWidth / 2 + (index - 5) * (letterSize + spacing)
+      initialY = containerHeight * 0.15 + letterSize + 20 // 20px gap between lines
+    }
   } else {
-    // Second word "PATEL" (indices 5-9)
-    const firstWordWidth = 5 * (letterSize + spacing) - spacing
-    const offset = firstWordWidth + spaceWidth
-    initialX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + offset + (index - 5) * (letterSize + spacing)
+    // On desktop: horizontal layout
+    if (index < 5) {
+      // First word "AARYA" (indices 0-4)
+      const firstWordWidth = 5 * (letterSize + spacing) - spacing
+      initialX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + index * (letterSize + spacing)
+    } else {
+      // Second word "PATEL" (indices 5-9)
+      const firstWordWidth = 5 * (letterSize + spacing) - spacing
+      const offset = firstWordWidth + spaceWidth
+      initialX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + offset + (index - 5) * (letterSize + spacing)
+    }
+    initialY = containerHeight * 0.1
   }
-  // Better vertical positioning on mobile (centered) vs desktop (top)
-  const initialY = typeof window !== 'undefined' && window.innerWidth < 768 
-    ? containerHeight * 0.15 
-    : containerHeight * 0.1
   
   const x = useMotionValue(initialX)
   const y = useMotionValue(initialY)
@@ -71,16 +85,33 @@ export default function PhysicsLetter({
   // Reset to initial position on mount and when container size changes
   useEffect(() => {
     let resetX: number
-    if (index < 5) {
+    let resetY: number
+    
+    if (isMobile) {
+      // On mobile: stack "AARYA" and "PATEL" vertically (two lines)
       const firstWordWidth = 5 * (letterSize + spacing) - spacing
-      resetX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + index * (letterSize + spacing)
+      if (index < 5) {
+        // First word "AARYA" (indices 0-4) - top line
+        resetX = containerWidth / 2 - firstWordWidth / 2 + index * (letterSize + spacing)
+        resetY = containerHeight * 0.15
+      } else {
+        // Second word "PATEL" (indices 5-9) - bottom line
+        const secondWordWidth = 5 * (letterSize + spacing) - spacing
+        resetX = containerWidth / 2 - secondWordWidth / 2 + (index - 5) * (letterSize + spacing)
+        resetY = containerHeight * 0.15 + letterSize + 20 // 20px gap between lines
+      }
     } else {
-      const firstWordWidth = 5 * (letterSize + spacing) - spacing
-      const offset = firstWordWidth + spaceWidth
-      resetX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + offset + (index - 5) * (letterSize + spacing)
+      // On desktop: horizontal layout
+      if (index < 5) {
+        const firstWordWidth = 5 * (letterSize + spacing) - spacing
+        resetX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + index * (letterSize + spacing)
+      } else {
+        const firstWordWidth = 5 * (letterSize + spacing) - spacing
+        const offset = firstWordWidth + spaceWidth
+        resetX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + offset + (index - 5) * (letterSize + spacing)
+      }
+      resetY = containerHeight * 0.1
     }
-    // Better vertical positioning on mobile (centered) vs desktop (top)
-    const resetY = isMobile ? containerHeight * 0.15 : containerHeight * 0.1
     
     x.set(resetX)
     y.set(resetY)

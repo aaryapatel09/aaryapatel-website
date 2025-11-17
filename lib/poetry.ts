@@ -27,9 +27,7 @@ the city is a machine and we are the loose bolts, the extra screws. but on certa
 
 matches my heartbeat, i imagine i belong, that my veins might glow like power lines,
 
-my fingers radiate like steel girders, until i, too, hum electric.
-
-and then`,
+my fingers radiate like steel girders, until i, too, hum electric.`,
 
   'the-clock-eats-its-own-hands': `in the corner,
 

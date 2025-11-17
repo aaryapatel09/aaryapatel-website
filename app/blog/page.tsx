@@ -46,7 +46,6 @@ export default function BlogPage() {
               slug: { current: 'how-to-live-inside-a-wire' },
               publishedAt: new Date().toISOString(),
               excerpt: 'in the city, i learned how to breathe around metal: exhale the hum of fluorescent lights...',
-              categories: ['Ghost in the Machine'],
             },
             {
               _id: '2',
@@ -54,7 +53,6 @@ export default function BlogPage() {
               slug: { current: 'the-clock-eats-its-own-hands' },
               publishedAt: new Date(Date.now() - 86400000).toISOString(),
               excerpt: 'in the corner, the clock chews minutes— swallows whole what was never mine...',
-              categories: ['Ghost in the Machine'],
             },
             {
               _id: '3',
@@ -66,10 +64,10 @@ export default function BlogPage() {
             },
             {
               _id: '4',
-              title: 'The Music Teacher&apos;s Final Lesson',
+              title: 'The Music Teachers Final Lesson',
               slug: { current: 'the-music-teachers-final-lesson' },
               publishedAt: new Date(Date.now() - 259200000).toISOString(),
-              excerpt: 'The replacement doesn&apos;t sweat when Rachmaninoff&apos;s thirds stretch beyond what ten fingers...',
+              excerpt: 'The replacement doesnt sweat when Rachmaninoffs thirds stretch beyond what ten fingers...',
               categories: ['Ghost in the Machine'],
             },
             {
