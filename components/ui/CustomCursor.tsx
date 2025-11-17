@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import Image from 'next/image'
 
 export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false)
+  const hasMovedRef = useRef(false)
   const [hasMoved, setHasMoved] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const cursorX = useMotionValue(-100)
@@ -19,7 +20,10 @@ export default function CustomCursor() {
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX - 20) // Offset by half the cursor size (40px / 2)
       cursorY.set(e.clientY - 20)
-      if (!hasMoved) setHasMoved(true)
+      if (!hasMovedRef.current) {
+        hasMovedRef.current = true
+        setHasMoved(true)
+      }
       setIsVisible(true)
     }
 
@@ -53,7 +57,7 @@ export default function CustomCursor() {
       window.removeEventListener('mouseleave', handleMouseLeave)
       window.removeEventListener('mouseover', handleMouseOver)
     }
-  }, [cursorX, cursorY, hasMoved])
+  }, [cursorX, cursorY])
 
   return (
     <motion.div

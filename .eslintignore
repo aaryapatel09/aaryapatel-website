@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+build
+portfolio-site-main
+portfolio-site-main/**/*
+
