@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/store/useStore'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-import F1Standings from '@/components/ui/F1Standings'
+import SnowEffect from '@/components/ui/SnowEffect'
 
 interface HubIcon {
   id: string
@@ -76,16 +76,19 @@ export default function MainHub() {
   ]
 
   return (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="min-h-screen pt-24 pb-12 relative overflow-hidden"
-          style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-        >
-          {/* Theme Toggle - Top Right */}
-          <div className="absolute top-6 right-6 z-30">
-            <ThemeToggle />
-          </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen pt-24 pb-12 relative overflow-hidden"
+      style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+    >
+      {/* Snow Effect */}
+      <SnowEffect />
+      
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-6 right-6 z-30">
+        <ThemeToggle />
+      </div>
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating particles */}
@@ -235,8 +238,8 @@ export default function MainHub() {
                     {/* Top section - Icon */}
                     <div className={`flex-1 flex items-center justify-center relative z-10 w-full ${
                       icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
-                        ? 'min-h-[180px] md:min-h-[240px] lg:min-h-[280px]'
-                        : 'min-h-[140px] md:min-h-[180px] lg:min-h-[220px]'
+                        ? 'min-h-[220px] md:min-h-[280px] lg:min-h-[340px]'
+                        : 'min-h-[200px] md:min-h-[260px] lg:min-h-[320px]'
                     }`}>
                       <motion.div
                         className="flex items-center justify-center w-full"
@@ -255,14 +258,14 @@ export default function MainHub() {
                             height={400}
                             className={
                               icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
-                                ? 'w-56 h-56 md:w-72 md:h-72 lg:w-96 lg:h-96 object-contain'
-                                : 'w-40 h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 object-contain'
+                                ? 'w-64 h-64 md:w-80 md:h-80 lg:w-[28rem] lg:h-[28rem] object-contain'
+                                : 'w-56 h-56 md:w-72 md:h-72 lg:w-96 lg:h-96 object-contain'
                             }
                             onError={() => handleImageError(icon.id)}
                             sizes={
                               icon.id === 'portfolio' || icon.id === 'blog' || icon.id === 'gallery'
-                                ? '(max-width: 768px) 224px, (max-width: 1024px) 288px, 384px'
-                                : '(max-width: 768px) 160px, (max-width: 1024px) 208px, 256px'
+                                ? '(max-width: 768px) 256px, (max-width: 1024px) 320px, 448px'
+                                : '(max-width: 768px) 224px, (max-width: 1024px) 288px, 384px'
                             }
                           />
                         ) : icon.emoji ? (
@@ -359,14 +362,35 @@ export default function MainHub() {
             </motion.div>
           </div>
 
-          {/* F1 Standings Sidebar */}
+          {/* F1 Standings Coming Soon */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
             className="lg:sticky lg:top-24 h-fit"
           >
-            <F1Standings />
+            <div className="p-6 rounded-lg border backdrop-blur-sm" style={{ 
+              backgroundColor: 'var(--bg-secondary)', 
+              borderColor: 'var(--border-color)',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            }}>
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center"
+              >
+                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse mx-auto mb-4" />
+                <h2 className="text-xl font-racing tracking-wider mb-2" style={{ color: 'var(--text-primary)' }}>
+                  LIVE STANDINGS
+                </h2>
+                <p className="text-sm font-mono" style={{ color: 'var(--text-secondary)' }}>
+                  Drivers & Constructors
+                </p>
+                <p className="text-xs font-mono mt-4 opacity-60" style={{ color: 'var(--text-secondary)' }}>
+                  Coming Soon
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>
