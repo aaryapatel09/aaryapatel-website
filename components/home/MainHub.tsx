@@ -278,7 +278,7 @@ export default function MainHub() {
 
                       {/* Description */}
                       <motion.p
-                        className="text-sm md:text-base lg:text-lg font-mono text-center"
+                        className="text-xs md:text-sm lg:text-base font-mono"
                         style={{ 
                           color: 'var(--text-secondary)',
                           textAlign: 'center',
