@@ -41,7 +41,7 @@ export default function SocialLinks() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.5 }}
-      className="fixed bottom-6 right-6 z-50 flex flex-col gap-4"
+      className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col gap-3 md:gap-4"
     >
       {socialLinks.map((social, index) => (
         <motion.div
@@ -60,23 +60,25 @@ export default function SocialLinks() {
             aria-label={social.name}
           >
             <motion.div
-              className={`w-24 h-24 rounded-full bg-black border-2 border-white/30 flex items-center justify-center transition-all duration-300 ${social.color} backdrop-blur-sm`}
+              className={`w-16 h-16 md:w-24 md:h-24 rounded-full bg-black border-2 border-white/30 flex items-center justify-center transition-all duration-300 ${social.color} backdrop-blur-sm`}
               whileHover={{
                 borderColor: 'rgba(255, 255, 255, 1)',
                 boxShadow: '0 0 40px rgba(255, 255, 255, 0.7)',
               }}
             >
               {imageErrors[social.name] ? (
-                <span className="text-5xl">{social.emoji}</span>
+                <span className="text-3xl md:text-5xl">{social.emoji}</span>
               ) : (
-                <Image
-                  src={social.icon}
-                  alt={social.name}
-                  width={56}
-                  height={56}
-                  className="object-contain"
-                  onError={() => handleImageError(social.name)}
-                />
+                <div className="w-8 h-8 md:w-14 md:h-14 relative">
+                  <Image
+                    src={social.icon}
+                    alt={social.name}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 32px, 56px"
+                    onError={() => handleImageError(social.name)}
+                  />
+                </div>
               )}
             </motion.div>
           </Link>
