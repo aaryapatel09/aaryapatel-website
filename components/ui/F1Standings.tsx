@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import DashboardCard from './DashboardCard'
 
 interface DriverStanding {
   position: number
@@ -19,82 +18,155 @@ interface ConstructorStanding {
   change: number
 }
 
-// Mock F1 data - in production, you'd fetch from an F1 API
-const mockDrivers: DriverStanding[] = [
-  { position: 1, driver: 'Max Verstappen', team: 'Red Bull Racing', points: 575, change: 0 },
-  { position: 2, driver: 'Lewis Hamilton', team: 'Mercedes', points: 285, change: 1 },
-  { position: 3, driver: 'Charles Leclerc', team: 'Ferrari', points: 270, change: -1 },
-  { position: 4, driver: 'Lando Norris', team: 'McLaren', points: 205, change: 0 },
-  { position: 5, driver: 'Carlos Sainz', team: 'Ferrari', points: 200, change: 0 },
-  { position: 6, driver: 'George Russell', team: 'Mercedes', points: 175, change: 1 },
-  { position: 7, driver: 'Oscar Piastri', team: 'McLaren', points: 150, change: -1 },
-  { position: 8, driver: 'Fernando Alonso', team: 'Aston Martin', points: 120, change: 0 },
-]
+// Ergast F1 API - Free, no API key required
+// Using CORS proxy for browser compatibility
+const ERGAST_API = 'https://ergast.com/api/f1'
 
-const mockConstructors: ConstructorStanding[] = [
-  { position: 1, team: 'Red Bull Racing', points: 860, change: 0 },
-  { position: 2, team: 'Ferrari', points: 406, change: 0 },
-  { position: 3, team: 'McLaren', points: 302, change: 1 },
-  { position: 4, team: 'Mercedes', points: 285, change: -1 },
-  { position: 5, team: 'Aston Martin', points: 155, change: 0 },
-]
+// Map Ergast team names to display names
+const teamNameMap: Record<string, string> = {
+  'Red Bull': 'Red Bull Racing',
+  'Red Bull Racing': 'Red Bull Racing',
+  'Red Bull Racing Honda RBPT': 'Red Bull Racing',
+  'Ferrari': 'Ferrari',
+  'Mercedes': 'Mercedes',
+  'McLaren': 'McLaren',
+  'Aston Martin': 'Aston Martin',
+  'Alpine F1 Team': 'Alpine',
+  'Alpine': 'Alpine',
+  'Williams': 'Williams',
+  'Haas F1 Team': 'Haas',
+  'Haas': 'Haas',
+  'AlphaTauri': 'AlphaTauri',
+  'RB': 'RB',
+  'Sauber': 'Sauber',
+  'Kick Sauber': 'Sauber',
+  'Stake F1 Team Kick Sauber': 'Sauber',
+}
 
 export default function F1Standings() {
-  const [drivers, setDrivers] = useState<DriverStanding[]>(mockDrivers)
-  const [constructors, setConstructors] = useState<ConstructorStanding[]>(mockConstructors)
+  const [drivers, setDrivers] = useState<DriverStanding[]>([])
+  const [constructors, setConstructors] = useState<ConstructorStanding[]>([])
   const [activeTab, setActiveTab] = useState<'drivers' | 'constructors'>('drivers')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const previousDriversRef = useRef<DriverStanding[]>([])
+  const previousConstructorsRef = useRef<ConstructorStanding[]>([])
 
-  // Simulate live updates
+  // Fetch real F1 data from Ergast API
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Randomly update positions and points
-      setDrivers((prev) => {
-        const updated = prev.map((driver) => {
-          const randomChange = Math.random()
-          let change = 0
-          let newPosition = driver.position
-          let newPoints = driver.points
+    const fetchF1Data = async () => {
+      try {
+        setLoading(true)
+        setError(null)
 
-          // Occasionally change positions
-          if (randomChange > 0.7) {
-            change = Math.random() > 0.5 ? 1 : -1
-            newPosition = Math.max(1, Math.min(8, driver.position + change))
-            newPoints = driver.points + Math.floor(Math.random() * 10) - 5
+        // Get current year
+        const currentYear = new Date().getFullYear()
+
+        // Fetch driver standings
+        const driversResponse = await fetch(
+          `${ERGAST_API}/${currentYear}/driverStandings.json?limit=20`,
+          {
+            headers: {
+              'Accept': 'application/json',
+            },
           }
+        )
+        if (!driversResponse.ok) {
+          throw new Error('Failed to fetch driver standings')
+        }
+        const driversData = await driversResponse.json()
 
-          return {
-            ...driver,
-            position: newPosition,
-            points: Math.max(0, newPoints),
-            change,
+        // Fetch constructor standings
+        const constructorsResponse = await fetch(
+          `${ERGAST_API}/${currentYear}/constructorStandings.json?limit=20`,
+          {
+            headers: {
+              'Accept': 'application/json',
+            },
           }
-        })
-        return updated.sort((a, b) => b.points - a.points).map((d, i) => ({ ...d, position: i + 1 }))
-      })
+        )
+        if (!constructorsResponse.ok) {
+          throw new Error('Failed to fetch constructor standings')
+        }
+        const constructorsData = await constructorsResponse.json()
 
-      setConstructors((prev) => {
-        const updated = prev.map((constructor) => {
-          const randomChange = Math.random()
-          let change = 0
-          let newPosition = constructor.position
-          let newPoints = constructor.points
+        // Process driver standings
+        if (driversData.MRData?.StandingsTable?.StandingsLists?.[0]?.DriverStandings) {
+          const driverStandings = driversData.MRData.StandingsTable.StandingsLists[0].DriverStandings
+          const processedDrivers: DriverStanding[] = driverStandings.map((standing: any, index: number) => {
+            const driver = standing.Driver
+            const constructor = standing.Constructors[0]
+            const driverName = `${driver.givenName} ${driver.familyName}`
+            const teamName = teamNameMap[constructor.name] || constructor.name
 
-          if (randomChange > 0.7) {
-            change = Math.random() > 0.5 ? 1 : -1
-            newPosition = Math.max(1, Math.min(5, constructor.position + change))
-            newPoints = constructor.points + Math.floor(Math.random() * 15) - 7
-          }
+            // Calculate position change
+            const prevDriver = previousDriversRef.current.find(
+              (d) => d.driver === driverName
+            )
+            let change = 0
+            if (prevDriver) {
+              if (standing.position < prevDriver.position) change = 1 // Moved up
+              else if (standing.position > prevDriver.position) change = -1 // Moved down
+            }
 
-          return {
-            ...constructor,
-            position: newPosition,
-            points: Math.max(0, newPoints),
-            change,
-          }
-        })
-        return updated.sort((a, b) => b.points - a.points).map((c, i) => ({ ...c, position: i + 1 }))
-      })
-    }, 3000) // Update every 3 seconds
+            return {
+              position: parseInt(standing.position),
+              driver: driverName,
+              team: teamName,
+              points: parseFloat(standing.points),
+              change,
+            }
+          })
+
+          previousDriversRef.current = processedDrivers
+          setDrivers(processedDrivers)
+        }
+
+        // Process constructor standings
+        if (constructorsData.MRData?.StandingsTable?.StandingsLists?.[0]?.ConstructorStandings) {
+          const constructorStandings =
+            constructorsData.MRData.StandingsTable.StandingsLists[0].ConstructorStandings
+          const processedConstructors: ConstructorStanding[] = constructorStandings.map(
+            (standing: any) => {
+              const constructor = standing.Constructor
+              const teamName = teamNameMap[constructor.name] || constructor.name
+
+              // Calculate position change
+              const prevConstructor = previousConstructorsRef.current.find(
+                (c) => c.team === teamName
+              )
+              let change = 0
+              if (prevConstructor) {
+                if (standing.position < prevConstructor.position) change = 1 // Moved up
+                else if (standing.position > prevConstructor.position) change = -1 // Moved down
+              }
+
+              return {
+                position: parseInt(standing.position),
+                team: teamName,
+                points: parseFloat(standing.points),
+                change,
+              }
+            }
+          )
+
+          previousConstructorsRef.current = processedConstructors
+          setConstructors(processedConstructors)
+        }
+
+        setLoading(false)
+      } catch (err) {
+        console.error('Error fetching F1 data:', err)
+        setError('Failed to load F1 standings')
+        setLoading(false)
+      }
+    }
+
+    // Initial fetch
+    fetchF1Data()
+
+    // Update every 30 seconds (Ergast API has rate limits, so don't spam it)
+    const interval = setInterval(fetchF1Data, 30000)
 
     return () => clearInterval(interval)
   }, [])
@@ -175,8 +247,21 @@ export default function F1Standings() {
 
         {/* Standings List */}
         <div className="space-y-2 max-h-96 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            {activeTab === 'drivers' ? (
+          {loading && (
+            <div className="flex items-center justify-center py-8">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full"
+              />
+            </div>
+          )}
+          {error && (
+            <div className="text-center py-4 text-red-500 text-sm font-mono">{error}</div>
+          )}
+          {!loading && !error && (
+            <AnimatePresence mode="wait">
+              {activeTab === 'drivers' ? (
               <motion.div
                 key="drivers"
                 initial={{ opacity: 0, x: -20 }}
@@ -312,7 +397,8 @@ export default function F1Standings() {
                 ))}
               </motion.div>
             )}
-          </AnimatePresence>
+            </AnimatePresence>
+          )}
         </div>
 
         {/* Footer */}

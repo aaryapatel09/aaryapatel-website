@@ -147,8 +147,8 @@ export default function MainHub() {
               </p>
             </motion.div>
 
-            {/* Icon Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
+            {/* Icon Grid - Wider rectangles */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
           {icons.map((icon, index) => (
             <motion.div
               key={icon.id}
@@ -171,9 +171,9 @@ export default function MainHub() {
                 className="block"
               >
                 <div className="relative group">
-                  {/* Icon Container */}
+                  {/* Icon Container - Wider rectangle */}
                   <motion.div
-                    className="relative h-72 md:h-96 lg:h-[28rem] rounded-2xl p-6 md:p-8 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer"
+                    className="relative h-64 md:h-80 lg:h-96 rounded-2xl p-6 md:p-8 lg:p-10 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer min-w-[200px]"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: hoveredIcon === icon.id 
@@ -233,12 +233,12 @@ export default function MainHub() {
                     )}
 
                     {/* Top section - Icon */}
-                    <div className="flex-1 flex items-center justify-center relative z-10 w-full">
+                    <div className="flex-1 flex items-center justify-center relative z-10 w-full min-h-[140px] md:min-h-[180px] lg:min-h-[220px]">
                       <motion.div
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center w-full"
                         animate={{
                           rotate: hoveredIcon === icon.id ? [0, 15, -15, 10, -10, 0] : 0,
-                          scale: hoveredIcon === icon.id ? 1.2 : 1,
+                          scale: hoveredIcon === icon.id ? 1.15 : 1,
                           y: hoveredIcon === icon.id ? [-8, 8, -8, 0] : 0,
                         }}
                         transition={{ duration: 0.6, type: 'spring' }}
@@ -249,21 +249,21 @@ export default function MainHub() {
                             alt={icon.title}
                             width={288}
                             height={288}
-                            className="w-36 h-36 md:w-56 md:h-56 lg:w-72 lg:h-72 object-contain"
+                            className="w-40 h-40 md:w-52 md:h-52 lg:w-64 lg:h-64 object-contain"
                             onError={() => handleImageError(icon.id)}
-                            sizes="(max-width: 768px) 144px, (max-width: 1024px) 224px, 288px"
+                            sizes="(max-width: 768px) 160px, (max-width: 1024px) 208px, 256px"
                           />
                         ) : icon.emoji ? (
-                          <span className="text-7xl md:text-[8rem] lg:text-[10rem]">{icon.emoji}</span>
+                          <span className="text-7xl md:text-9xl lg:text-[10rem]">{icon.emoji}</span>
                         ) : null}
                       </motion.div>
                     </div>
 
                     {/* Bottom section - Text (always visible) */}
-                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-4">
+                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-4 py-2">
                       {/* Title */}
                       <motion.h2
-                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-center"
+                        className="text-xl md:text-2xl lg:text-3xl font-bold"
                         style={{ 
                           color: 'var(--text-primary)',
                           textAlign: 'center',
@@ -283,6 +283,7 @@ export default function MainHub() {
                           color: 'var(--text-secondary)',
                           textAlign: 'center',
                           width: '100%',
+                          lineHeight: '1.4',
                         }}
                         animate={{
                           opacity: hoveredIcon === icon.id ? 1 : 0.8,
