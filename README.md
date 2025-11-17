@@ -167,8 +167,3 @@ npm start
 ## License
 
 MIT License - feel free to use this as a template for your own portfolio!
-
-## Credits
-
-Inspired by bryantcodes.art and the world of Formula 1 engineering.
-
