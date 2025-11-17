@@ -27,10 +27,21 @@ export default function PhysicsLetter({
   const letterRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [velocity, setVelocity] = useState({ x: 0, y: 0 })
+  const [isMobile, setIsMobile] = useState(false)
   
-  const letterSize = 100
-  const spacing = 15
-  const spaceWidth = 40 // Width of space between words
+  // Check if mobile on mount
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+  
+  const letterSize = isMobile ? 40 : 100
+  const spacing = isMobile ? 8 : 15
+  const spaceWidth = isMobile ? 20 : 40 // Width of space between words
   
   // Calculate initial positions accounting for space in "AARYA PATEL"
   // "AARYA" = 5 letters, then space, then "PATEL" = 5 letters
@@ -45,7 +56,10 @@ export default function PhysicsLetter({
     const offset = firstWordWidth + spaceWidth
     initialX = containerWidth / 2 - (firstWordWidth + spaceWidth + 5 * (letterSize + spacing) - spacing) / 2 + offset + (index - 5) * (letterSize + spacing)
   }
-  const initialY = containerHeight * 0.1 // Top area
+  // Better vertical positioning on mobile (centered) vs desktop (top)
+  const initialY = typeof window !== 'undefined' && window.innerWidth < 768 
+    ? containerHeight * 0.15 
+    : containerHeight * 0.1
   
   const x = useMotionValue(initialX)
   const y = useMotionValue(initialY)
@@ -72,13 +86,12 @@ export default function PhysicsLetter({
     setVelocity({ x: 0, y: 0 })
   }, [containerWidth, containerHeight, index, x, y]) // Reset when container size changes
   
-  // Jiggle animation when not dragging (reduced on mobile)
+  // Jiggle animation when not dragging (disabled on mobile to keep letters in order)
   useEffect(() => {
-    if (isDragging) return
+    if (isDragging || isMobile) return // Disable jiggle on mobile
     
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
-    const jiggleAmount = isMobile ? 1 : 4 // Much less jiggle on mobile
-    const jiggleInterval = isMobile ? 4000 + Math.random() * 4000 : 2000 + Math.random() * 2000 // Less frequent on mobile
+    const jiggleAmount = 4
+    const jiggleInterval = 2000 + Math.random() * 2000
     
     const interval = setInterval(() => {
       const jiggleX = (Math.random() - 0.5) * jiggleAmount
@@ -89,11 +102,11 @@ export default function PhysicsLetter({
     }, jiggleInterval)
     
     return () => clearInterval(interval)
-  }, [isDragging, x, y])
+  }, [isDragging, isMobile, x, y])
   
-  // Physics simulation
+  // Physics simulation (disabled on mobile to keep letters in order)
   useEffect(() => {
-    if (isDragging) return
+    if (isDragging || isMobile) return // Disable physics on mobile
     
     let animationFrame: number
     let lastTime = Date.now()
@@ -206,25 +219,28 @@ export default function PhysicsLetter({
     return () => {
       if (animationFrame) cancelAnimationFrame(animationFrame)
     }
-  }, [isDragging, x, y, velocity, containerWidth, containerHeight, carBounds, letterSize, otherLetters, index, onPositionUpdate])
+  }, [isDragging, isMobile, x, y, velocity, containerWidth, containerHeight, carBounds, letterSize, otherLetters, index, onPositionUpdate])
   
   const handleDragStart = () => {
+    if (isMobile) return // Disable dragging on mobile
     setIsDragging(true)
     setVelocity({ x: 0, y: 0 })
   }
   
   const handleDrag = (_: any, info: any) => {
+    if (isMobile) return
     setVelocity({ x: info.velocity.x, y: info.velocity.y })
   }
   
   const handleDragEnd = () => {
+    if (isMobile) return
     setIsDragging(false)
   }
   
   return (
     <motion.div
       ref={letterRef}
-      drag
+      drag={!isMobile} // Disable drag on mobile
       dragMomentum={true}
       dragElastic={0.2}
       onDragStart={handleDragStart}
@@ -233,21 +249,29 @@ export default function PhysicsLetter({
       style={{
         x: xSpring,
         y: ySpring,
+        width: letterSize,
+        height: letterSize,
       }}
-      className="absolute cursor-grab active:cursor-grabbing select-none z-20"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
+      className={`absolute select-none z-20 ${isMobile ? '' : 'cursor-grab active:cursor-grabbing'}`}
+      whileHover={isMobile ? {} : { scale: 1.1 }}
+      whileTap={isMobile ? {} : { scale: 0.95 }}
     >
       <motion.div
-        className="text-white font-bold text-7xl md:text-9xl lg:text-[10rem] select-none"
+        className={`text-white font-bold select-none ${
+          isMobile 
+            ? 'text-3xl md:text-5xl lg:text-7xl' 
+            : 'text-7xl md:text-9xl lg:text-[10rem]'
+        }`}
         style={{
           fontFamily: 'system-ui, -apple-system, sans-serif',
-          textShadow: '0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)',
-          WebkitTextStroke: '3px white',
+          textShadow: isMobile 
+            ? '0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.3)'
+            : '0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)',
+          WebkitTextStroke: isMobile ? '2px white' : '3px white',
           WebkitTextFillColor: 'transparent',
           filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))',
         }}
-        animate={isDragging ? {} : {
+        animate={isDragging || isMobile ? {} : {
           rotate: [0, 3, -3, 2, -2, 0],
         }}
         transition={{
