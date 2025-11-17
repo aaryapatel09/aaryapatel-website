@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 
 export default function SocialLinks() {
@@ -68,7 +69,7 @@ export default function SocialLinks() {
               {imageErrors[social.name] ? (
                 <span className="text-5xl">{social.emoji}</span>
               ) : (
-                <img
+                <Image
                   src={social.icon}
                   alt={social.name}
                   width={56}

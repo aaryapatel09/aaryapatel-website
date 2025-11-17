@@ -53,7 +53,7 @@ export default function CustomCursor() {
       window.removeEventListener('mouseleave', handleMouseLeave)
       window.removeEventListener('mouseover', handleMouseOver)
     }
-  }, [cursorX, cursorY])
+  }, [cursorX, cursorY, hasMoved])
 
   return (
     <motion.div

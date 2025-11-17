@@ -34,7 +34,7 @@ interface UIState {
   setTheme: (theme: 'dark' | 'light') => void
   updateEngineParams: (params: Partial<EngineParams>) => void
   toggleEngineWidget: () => void
-  setGallerySort: (sort: typeof gallerySortBy) => void
+  setGallerySort: (sort: 'date') => void
   setGalleryFilter: (filter: string | null) => void
   registerClick: (elementId: string) => void
   registerHover: (elementId: string, isHovering: boolean) => void
