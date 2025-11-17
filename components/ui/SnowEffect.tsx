@@ -172,18 +172,6 @@ export default function SnowEffect() {
     }
   }, [isShoveling, mousePos])
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    const container = containerRef.current
-    if (!container) return
-
-    const rect = container.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const height = container.offsetHeight
-
-    setMousePos({ x, y })
-    setIsHoveringSnow(y > height - 150)
-  }, [])
 
   const handleMouseDown = useCallback(() => {
     if (isHoveringSnow) {
