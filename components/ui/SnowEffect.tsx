@@ -210,7 +210,8 @@ export default function SnowEffect() {
           onMouseLeave={handleMouseUp}
         />
       </div>
-      {isHoveringSnow && (
+      {/* Shovel Cursor - Temporarily commented out */}
+      {/* {isHoveringSnow && (
         <motion.div
           className="fixed pointer-events-none z-50"
           style={{
@@ -233,7 +234,7 @@ export default function SnowEffect() {
             style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))' }}
           />
         </motion.div>
-      )}
+      )} */}
     </>
   )
 }

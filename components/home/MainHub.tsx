@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/store/useStore'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-import SnowEffect from '@/components/ui/SnowEffect'
+// import SnowEffect from '@/components/ui/SnowEffect'
 
 interface HubIcon {
   id: string
@@ -83,7 +83,7 @@ export default function MainHub() {
       style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
     >
       {/* Snow Effect */}
-      <SnowEffect />
+      {/* <SnowEffect /> */}
       
       {/* Theme Toggle - Top Right */}
       <div className="absolute top-6 right-6 z-30">
