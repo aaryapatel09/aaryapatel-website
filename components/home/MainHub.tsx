@@ -143,8 +143,8 @@ export default function MainHub() {
           </p>
         </motion.div>
 
-        {/* Icon Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12">
+         {/* Icon Grid */}
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-10 max-w-[1600px] mx-auto">
           {icons.map((icon, index) => (
             <motion.div
               key={icon.id}
@@ -169,7 +169,7 @@ export default function MainHub() {
                 <div className="relative group">
                   {/* Icon Container */}
                   <motion.div
-                    className="relative h-72 md:h-96 lg:h-[28rem] rounded-2xl p-6 md:p-8 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer"
+                    className="relative h-72 md:h-96 lg:h-[28rem] rounded-2xl p-6 md:p-8 lg:p-10 flex flex-col items-center justify-between border-4 overflow-hidden cursor-pointer w-full"
                     style={{
                       backgroundColor: 'var(--bg-secondary)',
                       borderColor: hoveredIcon === icon.id 
@@ -256,7 +256,7 @@ export default function MainHub() {
                     </div>
 
                     {/* Bottom section - Text (always visible) */}
-                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-2 pb-2">
+                    <div className="relative z-10 w-full flex flex-col items-center justify-center space-y-2 px-3 pb-2">
                       {/* Title */}
                       <div className="w-full flex items-center justify-center">
                         <motion.h2
@@ -266,8 +266,11 @@ export default function MainHub() {
                             textAlign: 'center',
                             margin: '0 auto',
                             padding: 0,
-                            letterSpacing: 'normal',
+                            letterSpacing: '0.02em',
                             width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
                           }}
                           animate={{
                             scale: hoveredIcon === icon.id ? 1.05 : 1,
@@ -288,6 +291,9 @@ export default function MainHub() {
                             padding: 0,
                             letterSpacing: 'normal',
                             width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
                           }}
                           animate={{
                             opacity: hoveredIcon === icon.id ? 1 : 0.8,
