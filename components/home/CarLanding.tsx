@@ -14,13 +14,12 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   const [isReady, setIsReady] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
+  const [isSettled, setIsSettled] = useState(false)
   const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 })
   const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
   const carRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsReady(true), 1000)
-    
     // Set window size and car bounds
     if (typeof window !== 'undefined') {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight })
@@ -42,15 +41,24 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         setTimeout(updateCarBounds, 100)
       }
       
-      // Initial car bounds
-      setTimeout(updateCarBounds, 500)
+      // Initial car bounds after animation settles
+      setTimeout(() => {
+        updateCarBounds()
+        setIsReady(true)
+      }, 3500) // After driving animation completes
       
       window.addEventListener('resize', handleResize)
       return () => {
-        clearTimeout(timer)
         window.removeEventListener('resize', handleResize)
       }
     }
+  }, [])
+  
+  // Mark as settled after driving animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsSettled(true)
+    }, 3000) // After 3 seconds, car has settled
     
     return () => clearTimeout(timer)
   }, [])
@@ -108,27 +116,72 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
       <motion.div
         ref={carRef}
         className="relative z-10"
+        initial={{
+          x: -windowSize.width * 0.5, // Start off-screen left
+          y: windowSize.height * 0.3,
+          rotate: -45, // Angled for driving effect
+        }}
         animate={{
-          scale: isExiting ? 0.3 : isHovering ? 1.05 : 1,
-          y: isHovering ? -10 : 0,
+          // Driving path animation
+          x: isSettled 
+            ? 0 // Center position
+            : [
+                -windowSize.width * 0.5, // Start: off-screen left
+                windowSize.width * 0.3,  // Drive to right
+                windowSize.width * 0.4,  // Continue right
+                windowSize.width * 0.2,  // Turn back left
+                -windowSize.width * 0.1, // Drive left
+                0,                        // Settle in center
+              ],
+          y: isSettled
+            ? 0 // Center position
+            : [
+                windowSize.height * 0.3, // Start: upper area
+                windowSize.height * 0.2,  // Move up
+                windowSize.height * 0.4,  // Move down
+                windowSize.height * 0.25, // Move up
+                0,                         // Move to center
+                0,                         // Stay in center
+              ],
+          rotate: isSettled
+            ? 0 // Straight
+            : [
+                -45,  // Start angled
+                -30,  // Turn
+                15,   // Turn more
+                -15,  // Turn back
+                5,    // Almost straight
+                0,    // Straight (settled)
+              ],
+          scale: isExiting ? 0.3 : isHovering && isSettled ? 1.05 : isSettled ? 1 : 0.8,
           opacity: isExiting ? 0 : 1,
         }}
         transition={{
+          x: {
+            duration: isSettled ? 0 : 3,
+            ease: isSettled ? 'easeOut' : [0.4, 0, 0.2, 1], // Smooth curve for driving
+            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
+          },
+          y: {
+            duration: isSettled ? 0 : 3,
+            ease: isSettled ? 'easeOut' : [0.4, 0, 0.2, 1],
+            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
+          },
+          rotate: {
+            duration: isSettled ? 0 : 3,
+            ease: isSettled ? 'easeOut' : [0.4, 0, 0.2, 1],
+            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
+          },
           scale: {
-            duration: isExiting ? 0.8 : 0.3,
+            duration: isExiting ? 0.8 : isSettled ? 0.3 : 0.5,
             ease: isExiting ? 'easeIn' : 'easeOut',
           },
           opacity: {
             duration: isExiting ? 0.8 : 0.3,
             ease: 'easeInOut',
           },
-          y: {
-            type: 'spring',
-            stiffness: 300,
-            damping: 20,
-          },
         }}
-        onHoverStart={() => !isExiting && setIsHovering(true)}
+        onHoverStart={() => !isExiting && isSettled && setIsHovering(true)}
         onHoverEnd={() => setIsHovering(false)}
       >
         <motion.div
@@ -151,14 +204,14 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
             }}
           />
 
-          {/* Click hint */}
+          {/* Click hint - only show after car has settled */}
           <AnimatePresence>
-            {isReady && !isExiting && (
+            {isSettled && isReady && !isExiting && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
                 className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-center"
               >
                 <motion.p
