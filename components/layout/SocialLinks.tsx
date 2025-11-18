@@ -69,12 +69,13 @@ export default function SocialLinks() {
               {imageErrors[social.name] ? (
                 <span className="text-2xl md:text-5xl">{social.emoji}</span>
               ) : (
-                <div className="w-6 h-6 md:w-14 md:h-14 relative">
+                <div className="w-6 h-6 md:w-14 md:h-14 flex items-center justify-center p-1">
                   <Image
                     src={social.icon}
                     alt={social.name}
-                    fill
-                    className="object-contain"
+                    width={56}
+                    height={56}
+                    className="object-contain w-full h-full max-w-full max-h-full"
                     sizes="(max-width: 768px) 24px, 56px"
                     onError={() => handleImageError(social.name)}
                   />
