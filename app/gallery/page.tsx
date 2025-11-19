@@ -60,7 +60,7 @@ export default function GalleryPage() {
               title: 'Agnews Staircase', 
               category: 'adventure', 
               image: '/images/staircase-scene.jpg',
-              tags: ['adventure', 'mystery'],
+              tags: ['adventure', 'urbex'],
               _createdAt: new Date(Date.now() - 172800000).toISOString() 
             },
             { 
@@ -214,14 +214,15 @@ export default function GalleryPage() {
                           transition={{ duration: 0.5, delay: index * 0.1 }}
                           className="relative w-full"
                         >
-                          <Image
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
                             src={item.image}
                             alt={item.title}
-                            width={1000}
-                            height={1500}
                             className="w-full h-auto object-contain"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            unoptimized
+                            loading="lazy"
+                            onError={(e) => {
+                              console.error('Failed to load image:', item.image)
+                            }}
                           />
                         </motion.div>
                       </motion.div>
@@ -317,15 +318,15 @@ export default function GalleryPage() {
                 className="relative flex items-center justify-center w-full h-full"
               >
                 <div className="relative max-w-full max-h-[90vh] w-auto h-auto">
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={selectedItem.image}
                     alt={selectedItem.title}
-                    width={2000}
-                    height={3000}
                     className="max-w-full max-h-[90vh] w-auto h-auto object-contain"
-                    sizes="100vw"
-                    unoptimized
-                    priority
+                    loading="eager"
+                    onError={(e) => {
+                      console.error('Failed to load full-size image:', selectedItem.image)
+                    }}
                   />
                 </div>
               </motion.div>
@@ -361,4 +362,3 @@ export default function GalleryPage() {
     </div>
   )
 }
-
