@@ -37,14 +37,40 @@ export default function GalleryPage() {
           const data = await sanityClient.fetch(galleryItemsQuery)
           setItems(data)
         } else {
-          // Empty placeholder squares for future photos
+          // Gallery photos
           setItems([
-            { _id: '1', title: 'Travel Photo', category: 'travel', _createdAt: new Date().toISOString() },
-            { _id: '2', title: 'Adventure Photo', category: 'adventure', _createdAt: new Date(Date.now() - 86400000).toISOString() },
-            { _id: '3', title: 'Life Moment', category: 'life', _createdAt: new Date(Date.now() - 172800000).toISOString() },
-            { _id: '4', title: 'Travel Photo', category: 'travel', _createdAt: new Date(Date.now() - 259200000).toISOString() },
-            { _id: '5', title: 'Adventure Photo', category: 'adventure', _createdAt: new Date(Date.now() - 345600000).toISOString() },
-            { _id: '6', title: 'Life Moment', category: 'life', _createdAt: new Date(Date.now() - 432000000).toISOString() },
+            { 
+              _id: '1', 
+              title: 'Golden Gate Bridge', 
+              category: 'travel', 
+              image: '/images/golden-gate-bridge.jpg',
+              tags: ['travel', 'landscape', 'sunset'],
+              _createdAt: new Date().toISOString() 
+            },
+            { 
+              _id: '2', 
+              title: 'Sweet 16', 
+              category: 'life', 
+              image: '/images/birthday-celebration.jpg',
+              tags: ['life', 'celebration'],
+              _createdAt: new Date(Date.now() - 86400000).toISOString() 
+            },
+            { 
+              _id: '3', 
+              title: 'Agnews Staircase', 
+              category: 'adventure', 
+              image: '/images/staircase-scene.jpg',
+              tags: ['adventure', 'mystery'],
+              _createdAt: new Date(Date.now() - 172800000).toISOString() 
+            },
+            { 
+              _id: '4', 
+              title: 'Marin Headlands Sunset', 
+              category: 'travel', 
+              image: '/images/sunset-clouds.jpg',
+              tags: ['travel', 'landscape', 'sunset', 'nature'],
+              _createdAt: new Date(Date.now() - 259200000).toISOString() 
+            },
           ])
         }
       } catch (error) {

@@ -45,7 +45,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
       setTimeout(() => {
         updateCarBounds()
         setIsReady(true)
-      }, 3500) // After driving animation completes
+      }, 4000) // After driving animation completes (increased for smoother animation)
       
       window.addEventListener('resize', handleResize)
       return () => {
@@ -58,7 +58,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsSettled(true)
-    }, 3000) // After 3 seconds, car has settled
+    }, 3500) // After 3.5 seconds, car has settled (matches animation duration)
     
     return () => clearTimeout(timer)
   }, [])
@@ -153,28 +153,42 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
                 5,    // Almost straight
                 0,    // Straight (settled)
               ],
-          scale: isExiting ? 0.3 : isHovering && isSettled ? 1.05 : isSettled ? 1 : 0.8,
+          scale: isExiting 
+            ? 0.3 
+            : isHovering && isSettled 
+              ? 1.05 
+              : isSettled 
+                ? 1 
+                : [
+                    0.3,  // Start very small
+                    0.4,  // Grow slightly
+                    0.6,  // Continue growing
+                    0.8,  // Almost full size
+                    0.95, // Nearly there
+                    1,    // Full size when settled
+                  ],
           opacity: isExiting ? 0 : 1,
         }}
         transition={{
           x: {
-            duration: isSettled ? 0 : 3,
-            ease: isSettled ? 'easeOut' : [0.4, 0, 0.2, 1], // Smooth curve for driving
+            duration: isSettled ? 0 : 3.5,
+            ease: isSettled ? 'easeOut' : [0.25, 0.1, 0.25, 1], // Smoother cubic bezier
             times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
           },
           y: {
-            duration: isSettled ? 0 : 3,
-            ease: isSettled ? 'easeOut' : [0.4, 0, 0.2, 1],
+            duration: isSettled ? 0 : 3.5,
+            ease: isSettled ? 'easeOut' : [0.25, 0.1, 0.25, 1], // Smoother cubic bezier
             times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
           },
           rotate: {
-            duration: isSettled ? 0 : 3,
-            ease: isSettled ? 'easeOut' : [0.4, 0, 0.2, 1],
+            duration: isSettled ? 0 : 3.5,
+            ease: isSettled ? 'easeOut' : [0.25, 0.1, 0.25, 1], // Smoother cubic bezier
             times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
           },
           scale: {
-            duration: isExiting ? 0.8 : isSettled ? 0.3 : 0.5,
-            ease: isExiting ? 'easeIn' : 'easeOut',
+            duration: isExiting ? 0.8 : isSettled ? 0.3 : 3.5,
+            ease: isExiting ? 'easeIn' : [0.25, 0.1, 0.25, 1], // Smooth zoom in
+            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
           },
           opacity: {
             duration: isExiting ? 0.8 : 0.3,
