@@ -42,31 +42,39 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
+            {navItems.map((item, index) => (
+              <motion.div
                 key={item.id}
-                href={item.path}
-                onClick={() => setCurrentSection(item.id)}
-                className="relative px-4 py-2 text-sm font-mono interactive-element"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, type: 'spring', stiffness: 200 }}
               >
-                <span
-                  className={
-                    currentSection === item.id
-                      ? 'text-f1-red dashboard-glow'
-                      : 'text-f1-light hover:text-f1-red'
-                  }
+                <Link
+                  href={item.path}
+                  onClick={() => setCurrentSection(item.id)}
+                  className="relative px-4 py-2 text-sm font-mono interactive-element"
                 >
-                  {item.name}
-                </span>
-                {currentSection === item.id && (
-                  <motion.div
-                    layoutId="activeSection"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-f1-red"
-                    initial={false}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                  />
-                )}
-              </Link>
+                  <motion.span
+                    className={
+                      currentSection === item.id
+                        ? 'text-f1-red dashboard-glow'
+                        : 'text-f1-light hover:text-f1-red'
+                    }
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.name}
+                  </motion.span>
+                  {currentSection === item.id && (
+                    <motion.div
+                      layoutId="activeSection"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-f1-red"
+                      initial={false}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              </motion.div>
             ))}
           </nav>
 

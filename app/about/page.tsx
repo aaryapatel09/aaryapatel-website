@@ -64,84 +64,188 @@ export default function AboutPage() {
         </motion.section>
 
         {/* Skills Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-racing tracking-wider text-white mb-8">
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-racing tracking-wider text-white mb-8"
+          >
             SKILLS & EXPERTISE
-          </h2>
+          </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {skills.map((skill, index) => (
               <motion.div
                 key={skill.name}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
+                whileHover={{ scale: 1.05, y: -5 }}
               >
                 <DashboardCard>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm font-mono text-white">{skill.name}</span>
-                    <span className="text-sm font-racing text-white">
+                    <motion.span
+                      className="text-sm font-mono text-white"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      {skill.name}
+                    </motion.span>
+                    <motion.span
+                      className="text-sm font-racing text-white"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 + 0.5 }}
+                    >
                       {skill.level}%
-                    </span>
+                    </motion.span>
                   </div>
-                  <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden relative">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${skill.level}%` }}
-                      transition={{ duration: 1, delay: index * 0.1 }}
-                      className="h-full bg-gradient-to-r from-white to-gray-300"
-                    />
+                      whileInView={{ width: `${skill.level}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.2, delay: index * 0.1, ease: 'easeOut' }}
+                      className="h-full bg-gradient-to-r from-white to-gray-300 relative"
+                    >
+                      {/* Shimmer effect */}
+                      <motion.div
+                        className="absolute inset-0 bg-white/30"
+                        animate={{
+                          x: ['-100%', '100%'],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          delay: index * 0.1 + 1,
+                          ease: 'linear',
+                        }}
+                      />
+                    </motion.div>
                   </div>
                 </DashboardCard>
               </motion.div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* Experience Section */}
-        <section className="mb-20">
-          <h2 className="text-3xl font-racing tracking-wider text-white mb-8">
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-racing tracking-wider text-white mb-8"
+          >
             EXPERIENCE
-          </h2>
+          </motion.h2>
           <div className="space-y-6">
             {experiences.map((exp, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ delay: index * 0.15, type: 'spring', stiffness: 100 }}
+                whileHover={{ scale: 1.02, y: -5 }}
               >
-                <DashboardCard className="interactive-element">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                    <h3 className="text-xl font-racing text-white mb-2 md:mb-0">
+                <DashboardCard className="interactive-element h-full">
+                  <motion.div
+                    className="flex flex-col md:flex-row md:items-center md:justify-between mb-4"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.15 + 0.2 }}
+                  >
+                    <motion.h3
+                      className="text-xl font-racing text-white mb-2 md:mb-0"
+                      whileHover={{ scale: 1.05, x: 5 }}
+                    >
                       {exp.title}
-                    </h3>
-                    <span className="text-sm font-mono text-gray-300">{exp.period}</span>
-                  </div>
-                  <p className="text-sm font-mono text-gray-300">{exp.description}</p>
+                    </motion.h3>
+                    <motion.span
+                      className="text-sm font-mono text-gray-300"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      {exp.period}
+                    </motion.span>
+                  </motion.div>
+                  <motion.p
+                    className="text-sm font-mono text-gray-300"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.15 + 0.3 }}
+                  >
+                    {exp.description}
+                  </motion.p>
                 </DashboardCard>
               </motion.div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* Philosophy Section */}
-        <section>
-          <h2 className="text-3xl font-racing tracking-wider text-white mb-8">
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-racing tracking-wider text-white mb-8"
+          >
             ENGINEERING PHILOSOPHY
-          </h2>
-          <DashboardCard>
-            <p className="text-base font-mono text-gray-300 leading-relaxed mb-4">
-              I believe in writing clean, maintainable code and building systems that are both
-              performant and elegant. Every project is an opportunity to learn, innovate, and
-              push the boundaries of what&apos;s possible with technology.
-            </p>
-            <p className="text-base font-mono text-gray-300 leading-relaxed">
-              Whether it&apos;s crafting intuitive user interfaces, designing scalable architectures,
-              or solving complex engineering challenges, I approach each problem with curiosity,
-              attention to detail, and a focus on creating meaningful impact.
-            </p>
-          </DashboardCard>
-        </section>
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            whileHover={{ scale: 1.02, y: -5 }}
+            transition={{ type: 'spring', stiffness: 100 }}
+          >
+            <DashboardCard>
+              <motion.p
+                className="text-base font-mono text-gray-300 leading-relaxed mb-4"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
+                I believe in writing clean, maintainable code and building systems that are both
+                performant and elegant. Every project is an opportunity to learn, innovate, and
+                push the boundaries of what&apos;s possible with technology.
+              </motion.p>
+              <motion.p
+                className="text-base font-mono text-gray-300 leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                Whether it&apos;s crafting intuitive user interfaces, designing scalable architectures,
+                or solving complex engineering challenges, I approach each problem with curiosity,
+                attention to detail, and a focus on creating meaningful impact.
+              </motion.p>
+            </DashboardCard>
+          </motion.div>
+        </motion.section>
       </div>
     </div>
   )

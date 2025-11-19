@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import DashboardCard from '@/components/ui/DashboardCard'
 import { useStore } from '@/store/useStore'
 
@@ -100,58 +100,108 @@ export default function AwardsPage() {
 
         {/* Category Filter */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="flex flex-wrap gap-4 mb-12"
         >
-          {categories.map((category) => (
-            <button
+          {categories.map((category, index) => (
+            <motion.button
               key={category}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 + index * 0.1, type: 'spring', stiffness: 200 }}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 font-racing tracking-wider text-sm border-2 transition-colors ${
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative px-6 py-2 font-racing tracking-wider text-sm border-2 transition-colors overflow-hidden ${
                 selectedCategory === category
                   ? 'border-white text-white bg-white/10'
                   : 'border-white/30 text-white/70 hover:border-white hover:text-white'
               }`}
             >
-              {category.toUpperCase()}
-            </button>
+              {/* Gradient background on active */}
+              {selectedCategory === category && (
+                <motion.div
+                  layoutId="filterBackground"
+                  className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/10 to-white/20"
+                  initial={false}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">{category.toUpperCase()}</span>
+            </motion.button>
           ))}
         </motion.div>
 
         {/* Awards List */}
         <div className="space-y-6">
-          {filteredAwards.map((award, index) => (
-            <motion.div
-              key={award.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <DashboardCard className="interactive-element">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-racing text-white mb-2">
-                      {award.title}
-                    </h3>
-                    <p className="text-sm font-mono text-gray-300 mb-1">
-                      {award.issuer}
-                    </p>
-                    <p className="text-xs font-mono text-gray-400">
-                      {award.date}
-                    </p>
+          <AnimatePresence mode="wait">
+            {filteredAwards.map((award, index) => (
+              <motion.div
+                key={award.id}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+              >
+                <DashboardCard className="interactive-element h-full relative overflow-hidden">
+                  {/* Gradient background on hover */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-0"
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  <div className="relative z-10">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
+                      <div className="flex-1">
+                        <motion.h3
+                          className="text-xl font-racing text-white mb-2"
+                          whileHover={{ scale: 1.05, x: 5 }}
+                        >
+                          {award.title}
+                        </motion.h3>
+                        <motion.p
+                          className="text-sm font-mono text-gray-300 mb-1"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: index * 0.1 + 0.2 }}
+                        >
+                          {award.issuer}
+                        </motion.p>
+                        <motion.p
+                          className="text-xs font-mono text-gray-400"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: index * 0.1 + 0.3 }}
+                        >
+                          {award.date}
+                        </motion.p>
+                      </div>
+                      <motion.span
+                        className="px-3 py-1 text-xs font-racing bg-white/20 text-white border border-white/30 rounded mt-2 md:mt-0"
+                        whileHover={{ scale: 1.1, rotate: 2 }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.1 + 0.4 }}
+                      >
+                        {award.category.toUpperCase()}
+                      </motion.span>
+                    </div>
+                    <motion.p
+                      className="text-sm font-mono text-gray-300 leading-relaxed"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.1 + 0.5 }}
+                    >
+                      {award.description}
+                    </motion.p>
                   </div>
-                  <span className="px-3 py-1 text-xs font-racing bg-white/20 text-white border border-white/30 rounded mt-2 md:mt-0">
-                    {award.category.toUpperCase()}
-                  </span>
-                </div>
-                <p className="text-sm font-mono text-gray-300 leading-relaxed">
-                  {award.description}
-                </p>
-              </DashboardCard>
-            </motion.div>
-          ))}
+                </DashboardCard>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>
