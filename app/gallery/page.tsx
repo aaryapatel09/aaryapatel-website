@@ -51,7 +51,7 @@ export default function GalleryPage() {
               _id: '2', 
               title: 'Sweet 16', 
               category: 'life', 
-              image: '/images/birthday-celebration.png',
+              image: '/images/birthday-celebration.jpg',
               tags: ['life', 'celebration'],
               _createdAt: new Date(Date.now() - 86400000).toISOString() 
             },
@@ -67,7 +67,7 @@ export default function GalleryPage() {
               _id: '4', 
               title: 'Marin Headlands Sunset', 
               category: 'travel', 
-              image: '/images/sunset-clouds.png',
+              image: '/images/sunset-clouds.jpg',
               tags: ['travel', 'landscape', 'sunset', 'nature'],
               _createdAt: new Date(Date.now() - 259200000).toISOString() 
             },
