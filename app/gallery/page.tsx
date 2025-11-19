@@ -176,7 +176,7 @@ export default function GalleryPage() {
           </button>
         </motion.div>
 
-        {/* Gallery Grid */}
+        {/* Gallery Grid - Masonry Layout */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <motion.div
@@ -186,7 +186,7 @@ export default function GalleryPage() {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
             <AnimatePresence mode="wait">
               {sortedAndFilteredItems.map((item, index) => (
                 <motion.div
@@ -195,74 +195,80 @@ export default function GalleryPage() {
                   animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
-                  whileHover={{ y: -12, scale: 1.05, rotateY: 5 }}
+                  whileHover={{ y: -12, scale: 1.03, rotateY: 5 }}
                   whileTap={{ scale: 0.95 }}
                   style={{ perspective: 1000 }}
                   onClick={() => setSelectedItem(item)}
-                  className="cursor-pointer"
+                  className="cursor-pointer break-inside-avoid mb-6"
                 >
-                  <DashboardCard className="h-full interactive-element overflow-hidden">
-                    <motion.div
-                      className="aspect-video bg-white mb-4 flex items-center justify-center border-2 border-white/20 relative overflow-hidden"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {item.image ? (
+                  <DashboardCard className="interactive-element overflow-hidden p-0">
+                    {item.image ? (
+                      <motion.div
+                        className="relative w-full bg-black border-2 border-white/20 overflow-hidden"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.3 }}
+                      >
                         <motion.div
-                          initial={{ scale: 1.2, opacity: 0 }}
+                          initial={{ scale: 1.1, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
-                          className="absolute inset-0"
+                          className="relative w-full"
                         >
                           <Image
                             src={item.image}
                             alt={item.title}
-                            fill
-                            className="object-cover"
+                            width={1000}
+                            height={1500}
+                            className="w-full h-auto object-contain"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            unoptimized
                           />
                         </motion.div>
-                      ) : (
-                        <motion.div
-                          className="text-black/30 text-sm font-mono"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.1 + 0.2 }}
-                        >
-                          {item.title}
-                        </motion.div>
-                      )}
-                    </motion.div>
-                    <motion.h3
-                      className="text-lg font-racing text-white mb-2"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 + 0.2 }}
-                      whileHover={{ scale: 1.05, x: 5 }}
-                    >
-                      {item.title}
-                    </motion.h3>
-                    {item.tags && item.tags.length > 0 && (
+                      </motion.div>
+                    ) : (
                       <motion.div
-                        className="flex flex-wrap gap-2"
+                        className="aspect-video bg-white flex items-center justify-center border-2 border-white/20"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.1 + 0.3 }}
+                        transition={{ delay: index * 0.1 + 0.2 }}
                       >
-                        {item.tags.map((tag, tagIndex) => (
-                          <motion.span
-                            key={tag}
-                            className="px-2 py-1 text-xs font-mono bg-white/20 text-white rounded"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.1 + 0.3 + tagIndex * 0.05, type: 'spring', stiffness: 200 }}
-                            whileHover={{ scale: 1.1, y: -2 }}
-                          >
-                            {tag}
-                          </motion.span>
-                        ))}
+                        <div className="text-black/30 text-sm font-mono">
+                          {item.title}
+                        </div>
                       </motion.div>
                     )}
+                    <div className="p-4">
+                      <motion.h3
+                        className="text-lg font-racing text-white mb-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 + 0.2 }}
+                        whileHover={{ scale: 1.05, x: 5 }}
+                      >
+                        {item.title}
+                      </motion.h3>
+                      {item.tags && item.tags.length > 0 && (
+                        <motion.div
+                          className="flex flex-wrap gap-2"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: index * 0.1 + 0.3 }}
+                        >
+                          {item.tags.map((tag, tagIndex) => (
+                            <motion.span
+                              key={tag}
+                              className="px-2 py-1 text-xs font-mono bg-white/20 text-white rounded"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: index * 0.1 + 0.3 + tagIndex * 0.05, type: 'spring', stiffness: 200 }}
+                              whileHover={{ scale: 1.1, y: -2 }}
+                            >
+                              {tag}
+                            </motion.span>
+                          ))}
+                        </motion.div>
+                      )}
+                    </div>
                   </DashboardCard>
                 </motion.div>
               ))}
@@ -271,15 +277,15 @@ export default function GalleryPage() {
         )}
       </div>
 
-      {/* Modal for selected item */}
+      {/* Modal for selected item - Full Size Image */}
       <AnimatePresence>
-        {selectedItem && (
+        {selectedItem && selectedItem.image && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black z-50 flex items-center justify-center p-4 overflow-auto"
             onClick={() => setSelectedItem(null)}
           >
             <motion.div
@@ -288,27 +294,66 @@ export default function GalleryPage() {
               exit={{ scale: 0.8, opacity: 0, y: 50 }}
               transition={{ type: 'spring', stiffness: 100, damping: 15 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-w-4xl w-full bg-black border border-white p-8 relative"
+              className="relative w-full h-full flex flex-col items-center justify-center"
             >
-              <motion.h2
-                className="text-3xl font-racing text-white mb-4"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                {selectedItem.title}
-              </motion.h2>
+              {/* Close button */}
               <motion.button
                 onClick={() => setSelectedItem(null)}
-                className="mt-4 px-4 py-2 bg-white text-black font-racing hover:bg-gray-200"
-                whileHover={{ scale: 1.1, y: -2 }}
+                className="absolute top-4 right-4 z-10 w-12 h-12 bg-white/20 hover:bg-white/30 text-white font-racing text-2xl rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30"
+                whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                ×
+              </motion.button>
+              
+              {/* Full size image - maintains aspect ratio */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1 }}
+                className="relative flex items-center justify-center w-full h-full"
+              >
+                <div className="relative max-w-full max-h-[90vh] w-auto h-auto">
+                  <Image
+                    src={selectedItem.image}
+                    alt={selectedItem.title}
+                    width={2000}
+                    height={3000}
+                    className="max-w-full max-h-[90vh] w-auto h-auto object-contain"
+                    sizes="100vw"
+                    unoptimized
+                    priority
+                  />
+                </div>
+              </motion.div>
+              
+              {/* Title and tags - fixed at bottom */}
+              <motion.div
+                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-6 text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                CLOSE
-              </motion.button>
+                <h2 className="text-2xl md:text-3xl font-racing text-white mb-3">
+                  {selectedItem.title}
+                </h2>
+                {selectedItem.tags && selectedItem.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {selectedItem.tags.map((tag) => (
+                      <motion.span
+                        key={tag}
+                        className="px-3 py-1 text-xs font-mono bg-white/20 text-white rounded border border-white/30"
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        {tag}
+                      </motion.span>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
