@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { useStore } from '@/store/useStore'
 
 interface PhysicsLetterProps {
   letter: string
@@ -28,6 +29,8 @@ export default function PhysicsLetter({
   const [isDragging, setIsDragging] = useState(false)
   const [velocity, setVelocity] = useState({ x: 0, y: 0 })
   const [isMobile, setIsMobile] = useState(false)
+  const theme = useStore((state) => state.theme)
+  const isDark = theme === 'dark'
   
   // Check if mobile on mount
   useEffect(() => {
@@ -289,19 +292,28 @@ export default function PhysicsLetter({
       whileTap={isMobile ? {} : { scale: 0.95 }}
     >
       <motion.div
-        className={`text-white font-bold select-none ${
+        className={`font-bold select-none ${
           isMobile 
             ? 'text-3xl md:text-5xl lg:text-7xl' 
             : 'text-7xl md:text-9xl lg:text-[10rem]'
         }`}
         style={{
           fontFamily: 'system-ui, -apple-system, sans-serif',
+          color: isDark ? 'white' : 'black',
           textShadow: isMobile 
-            ? '0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.3)'
-            : '0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)',
-          WebkitTextStroke: isMobile ? '2px white' : '3px white',
-          WebkitTextFillColor: 'transparent',
-          filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))',
+            ? isDark
+              ? '0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.3)'
+              : '0 0 15px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 0, 0, 0.3)'
+            : isDark
+              ? '0 0 30px rgba(255, 255, 255, 0.6), 0 0 60px rgba(255, 255, 255, 0.3)'
+              : '0 0 30px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.3)',
+          WebkitTextStroke: isMobile 
+            ? isDark ? '2px white' : '2px black'
+            : isDark ? '3px white' : '3px black',
+          WebkitTextFillColor: isDark ? 'transparent' : 'black',
+          filter: isDark 
+            ? 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))'
+            : 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.8))',
         }}
         animate={isDragging || isMobile ? {} : {
           rotate: [0, 3, -3, 2, -2, 0],
