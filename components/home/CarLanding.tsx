@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import PhysicsName from '@/components/ui/PhysicsName'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+import { useStore } from '@/store/useStore'
 
 interface CarLandingProps {
   onEnter: () => void
@@ -18,6 +19,8 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 })
   const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
   const carRef = useRef<HTMLDivElement>(null)
+  const theme = useStore((state) => state.theme)
+  const isDark = theme === 'dark'
 
   useEffect(() => {
     // Set window size and car bounds
@@ -90,7 +93,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
+            className={`absolute w-1 h-1 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`}
             initial={{
               x: Math.random() * windowSize.width,
               y: Math.random() * windowSize.height,
@@ -231,14 +234,14 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
                 <motion.p
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-white text-xl md:text-2xl font-mono tracking-wider"
+                  className={`${isDark ? 'text-white' : 'text-black'} text-xl md:text-2xl font-mono tracking-wider`}
                 >
                   CLICK TO ENTER
                 </motion.p>
                 <motion.div
                   animate={{ y: [0, 10, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-white text-4xl mt-2"
+                  className={`${isDark ? 'text-white' : 'text-black'} text-4xl mt-2`}
                 >
                   ↓
                 </motion.div>
@@ -254,7 +257,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 0.3, scale: 1.2 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-white blur-3xl pointer-events-none"
+          className={`absolute inset-0 blur-3xl pointer-events-none ${isDark ? 'bg-white' : 'bg-black'}`}
         />
       )}
       

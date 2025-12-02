@@ -20,12 +20,23 @@ export default function PortfolioPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastTouchY = useRef<number>(0)
 
   useEffect(() => {
     setCurrentSection('portfolio')
   }, [setCurrentSection])
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Prevent clicks during scroll on mobile
   useEffect(() => {
@@ -47,13 +58,13 @@ export default function PortfolioPage() {
       const currentY = e.touches[0].clientY
       const deltaY = Math.abs(currentY - lastTouchY.current)
       
-      if (deltaY > 5) {
-        // User is scrolling
+      if (deltaY > 10) {
+        // User is scrolling (increased threshold for better detection)
         setIsScrolling(true)
         if (scrollTimer) clearTimeout(scrollTimer)
         scrollTimer = setTimeout(() => {
           setIsScrolling(false)
-        }, 150)
+        }, 200) // Increased timeout for better scroll detection
       }
       
       lastTouchY.current = currentY
@@ -190,16 +201,16 @@ export default function PortfolioPage() {
                 animate={{ opacity: 1, y: 0, scale: 1, rotateY: 0 }}
                 exit={{ opacity: 0, y: -20, scale: 0.9 }}
                 transition={{ delay: index * 0.1, type: 'spring', stiffness: 100 }}
-                drag
+                drag={!isMobile} // Disable drag on mobile to allow smooth scrolling
                 dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                 dragElastic={0.2}
                 dragTransition={{ bounceStiffness: 300, bounceDamping: 20 }}
-                onDragStart={() => setDraggedIndex(index)}
-                onDragEnd={() => setDraggedIndex(null)}
+                onDragStart={() => !isMobile && setDraggedIndex(index)}
+                onDragEnd={() => !isMobile && setDraggedIndex(null)}
                 whileHover={{ y: -12, scale: 1.03, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
                 style={{ perspective: 1000 }}
-                className="cursor-grab active:cursor-grabbing"
+                className={isMobile ? '' : 'cursor-grab active:cursor-grabbing'}
                 onClick={(e) => {
                   // Prevent click if user was just scrolling
                   if (isScrolling) {
@@ -218,13 +229,13 @@ export default function PortfolioPage() {
                 }}
               >
                 <DashboardCard
-                  className={`h-full interactive-element cursor-pointer ${
+                  className={`h-full interactive-element cursor-pointer relative ${
                     project.featured ? 'border-white' : ''
                   }`}
                 >
                   {project.featured && (
                     <motion.div
-                      className="absolute top-4 right-4 px-2 py-1 bg-white text-black text-xs font-racing"
+                      className="absolute top-3 left-3 px-2 py-1 bg-white text-black text-xs font-racing z-10"
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: index * 0.1 + 0.3 }}
@@ -234,7 +245,7 @@ export default function PortfolioPage() {
                     </motion.div>
                   )}
                   <motion.h3
-                    className="text-xl font-racing text-white mb-3"
+                    className={`text-xl font-racing text-white mb-3 ${project.featured ? 'pr-20' : ''}`}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 + 0.2 }}

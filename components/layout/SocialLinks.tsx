@@ -4,9 +4,12 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import { useStore } from '@/store/useStore'
 
 export default function SocialLinks() {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
+  const theme = useStore((state) => state.theme)
+  const isDark = theme === 'dark'
 
   const socialLinks = [
     {
@@ -60,10 +63,14 @@ export default function SocialLinks() {
             aria-label={social.name}
           >
             <motion.div
-              className={`w-12 h-12 md:w-24 md:h-24 rounded-full bg-black border-2 border-white/30 flex items-center justify-center transition-all duration-300 ${social.color} backdrop-blur-sm`}
+              className={`w-12 h-12 md:w-24 md:h-24 rounded-full ${
+                isDark ? 'bg-black border-white/30' : 'bg-white border-black/30'
+              } border-2 flex items-center justify-center transition-all duration-300 ${social.color} backdrop-blur-sm`}
               whileHover={{
-                borderColor: 'rgba(255, 255, 255, 1)',
-                boxShadow: '0 0 40px rgba(255, 255, 255, 0.7)',
+                borderColor: isDark ? 'rgba(255, 255, 255, 1)' : 'rgba(0, 0, 0, 1)',
+                boxShadow: isDark 
+                  ? '0 0 40px rgba(255, 255, 255, 0.7)' 
+                  : '0 0 40px rgba(0, 0, 0, 0.7)',
               }}
             >
               {imageErrors[social.name] ? (

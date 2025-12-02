@@ -71,14 +71,19 @@ export default function AboutPage() {
           transition={{ duration: 0.6 }}
           className="mb-20"
         >
-          <motion.h2
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl font-racing tracking-wider text-white mb-8"
+            className="mb-8"
           >
-            SKILLS & EXPERTISE
-          </motion.h2>
+            <h2 className="text-3xl font-racing tracking-wider text-white mb-2">
+              SKILLS & EXPERTISE
+            </h2>
+            <p className="text-sm font-mono text-gray-400 italic">
+              Percentages represent expertise level from beginner to expert
+            </p>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {skills.map((skill, index) => (
               <motion.div
