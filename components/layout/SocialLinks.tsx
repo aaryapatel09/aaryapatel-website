@@ -37,6 +37,7 @@ export default function SocialLinks() {
       icon: '/images/linkedin-icon.png',
       emoji: '💼',
       color: 'hover:bg-blue-600',
+      iconScale: 1.75,
     },
     {
       name: 'GitHub',
@@ -44,6 +45,7 @@ export default function SocialLinks() {
       icon: '/images/github-icon.png',
       emoji: '💻',
       color: 'hover:bg-gray-800',
+      iconScale: 2,
     },
     {
       name: 'X',
