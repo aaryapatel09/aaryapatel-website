@@ -29,7 +29,7 @@ export default function SocialLinks() {
       emoji: '📷',
       color: 'hover:bg-gradient-to-br hover:from-purple-500 hover:via-pink-500 hover:to-orange-500',
       /** Asset fills the bbox more than others; scale down so visual weight matches */
-      iconScale: 0.82,
+      iconScale: 1,
     },
     {
       name: 'LinkedIn',
