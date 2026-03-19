@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
 import TrackMapSVG from '@/components/ui/TrackMapSVG'
 
 const navLinks = [
@@ -18,6 +19,8 @@ const socialLinks = [
 ]
 
 export default function Footer() {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <motion.footer
       initial={{ opacity: 0 }}
@@ -27,13 +30,19 @@ export default function Footer() {
       className="relative mt-20 border-t border-f1-gray/30 bg-dashboard-bg/50"
     >
       {/* Animated track map background */}
-      <motion.div
-        className="absolute inset-0 opacity-10 pointer-events-none"
-        animate={{ opacity: [0.1, 0.15, 0.1] }}
-        transition={{ duration: 4, repeat: Infinity }}
-      >
-        <TrackMapSVG className="w-full h-full" />
-      </motion.div>
+      {shouldReduceMotion ? (
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <TrackMapSVG className="w-full h-full" />
+        </div>
+      ) : (
+        <motion.div
+          className="absolute inset-0 opacity-10 pointer-events-none"
+          animate={{ opacity: [0.1, 0.15, 0.1] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        >
+          <TrackMapSVG className="w-full h-full" />
+        </motion.div>
+      )}
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -138,18 +147,27 @@ export default function Footer() {
             className="mt-4 md:mt-0 flex items-center space-x-2"
             whileHover={{ scale: 1.1 }}
           >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              className="w-3 h-3 border border-f1-red rounded-full"
-            />
-            <motion.span
-              className="text-xs text-f1-gray font-mono"
-              animate={{ opacity: [1, 0.5, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              SYSTEM ACTIVE
-            </motion.span>
+            {shouldReduceMotion ? (
+              <>
+                <div className="w-3 h-3 border border-f1-red rounded-full" />
+                <span className="text-xs text-f1-gray font-mono">SYSTEM ACTIVE</span>
+              </>
+            ) : (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                  className="w-3 h-3 border border-f1-red rounded-full"
+                />
+                <motion.span
+                  className="text-xs text-f1-gray font-mono"
+                  animate={{ opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  SYSTEM ACTIVE
+                </motion.span>
+              </>
+            )}
           </motion.div>
         </motion.div>
       </div>

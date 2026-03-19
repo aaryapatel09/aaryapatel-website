@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import { useStore } from '@/store/useStore'
 
 interface PhysicsLetterProps {
@@ -31,6 +31,7 @@ export default function PhysicsLetter({
   const [isMobile, setIsMobile] = useState(false)
   const theme = useStore((state) => state.theme)
   const isDark = theme === 'dark'
+  const shouldReduceMotion = useReducedMotion()
   
   // Check if mobile on mount
   useEffect(() => {
@@ -123,7 +124,7 @@ export default function PhysicsLetter({
   
   // Jiggle animation when not dragging (disabled on mobile to keep letters in order)
   useEffect(() => {
-    if (isDragging || isMobile) return // Disable jiggle on mobile
+    if (isDragging || isMobile || shouldReduceMotion) return // Disable jiggle when reducing motion
     
     const jiggleAmount = 4
     const jiggleInterval = 2000 + Math.random() * 2000
@@ -141,7 +142,7 @@ export default function PhysicsLetter({
   
   // Physics simulation (disabled on mobile to keep letters in order)
   useEffect(() => {
-    if (isDragging || isMobile) return // Disable physics on mobile
+    if (isDragging || isMobile || shouldReduceMotion) return // Disable physics when reducing motion
     
     let animationFrame: number
     let lastTime = Date.now()
@@ -315,14 +316,18 @@ export default function PhysicsLetter({
             ? 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))'
             : 'drop-shadow(0 0 10px rgba(0, 0, 0, 0.8))',
         }}
-        animate={isDragging || isMobile ? {} : {
+        animate={isDragging || isMobile || shouldReduceMotion ? {} : {
           rotate: [0, 3, -3, 2, -2, 0],
         }}
-        transition={{
-          duration: 3 + Math.random() * 2,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
+        transition={
+          shouldReduceMotion || isDragging || isMobile
+            ? { duration: 0 }
+            : {
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                repeatType: 'reverse',
+              }
+        }
       >
         {letter}
       </motion.div>

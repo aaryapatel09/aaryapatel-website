@@ -51,6 +51,17 @@ export default function EngineSchematicSVG({
           transition={{ duration: 0.2 }}
           onMouseEnter={() => onPartHover(part.id)}
           onMouseLeave={() => onPartHover(null)}
+          onFocus={() => onPartHover(part.id)}
+          onBlur={() => onPartHover(null)}
+          tabIndex={0}
+          role="button"
+          aria-label={`Engine part: ${part.id}`}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onPartHover(part.id)
+            }
+          }}
           className="cursor-pointer"
         />
       ))}

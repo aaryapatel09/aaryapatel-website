@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 interface Particle {
   id: number
@@ -14,6 +14,7 @@ interface Particle {
 
 export default function FloatingParticles({ count = 30 }: { count?: number }) {
   const particles = useRef<Particle[]>([])
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     // Generate random particles
@@ -26,6 +27,11 @@ export default function FloatingParticles({ count = 30 }: { count?: number }) {
       delay: Math.random() * 5,
     }))
   }, [count])
+
+  if (shouldReduceMotion) {
+    // Avoid infinite motion loops for reduced-motion users.
+    return null
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">

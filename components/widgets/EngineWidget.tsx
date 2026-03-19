@@ -28,12 +28,15 @@ export default function EngineWidget() {
             {/* RPM Slider */}
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-mono text-f1-light">RPM</label>
+                <label htmlFor="engine-rpm" className="text-sm font-mono text-f1-light">
+                  RPM
+                </label>
                 <span className="text-sm font-racing text-dashboard-text">
                   {engineParams.rpm.toLocaleString()}
                 </span>
               </div>
               <input
+                id="engine-rpm"
                 type="range"
                 min="0"
                 max="15000"
@@ -58,12 +61,15 @@ export default function EngineWidget() {
             {/* Fuel Mix Slider */}
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-mono text-f1-light">FUEL MIX</label>
+                <label htmlFor="engine-fuel-mix" className="text-sm font-mono text-f1-light">
+                  FUEL MIX
+                </label>
                 <span className="text-sm font-racing text-dashboard-text">
                   {engineParams.fuelMix}%
                 </span>
               </div>
               <input
+                id="engine-fuel-mix"
                 type="range"
                 min="0"
                 max="100"
@@ -89,6 +95,8 @@ export default function EngineWidget() {
                 <label className="text-sm font-mono text-f1-light">DRS</label>
                 <button
                   onClick={() => updateEngineParams({ drs: !engineParams.drs })}
+                  aria-label="Toggle DRS"
+                  aria-pressed={engineParams.drs}
                   className={`relative w-16 h-8 rounded-full transition-colors ${
                     engineParams.drs ? 'bg-dashboard-text' : 'bg-f1-gray'
                   }`}
@@ -107,12 +115,15 @@ export default function EngineWidget() {
             {/* Boost Slider */}
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-mono text-f1-light">BOOST</label>
+                <label htmlFor="engine-boost" className="text-sm font-mono text-f1-light">
+                  BOOST
+                </label>
                 <span className="text-sm font-racing text-dashboard-text">
                   {engineParams.boost.toFixed(1)} BAR
                 </span>
               </div>
               <input
+                id="engine-boost"
                 type="range"
                 min="0"
                 max="100"

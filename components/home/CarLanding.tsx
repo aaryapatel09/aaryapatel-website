@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Image from 'next/image'
 import PhysicsName from '@/components/ui/PhysicsName'
 import ThemeToggle from '@/components/ui/ThemeToggle'
@@ -21,6 +21,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   const carRef = useRef<HTMLDivElement>(null)
   const theme = useStore((state) => state.theme)
   const isDark = theme === 'dark'
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     // Set window size and car bounds
@@ -83,34 +84,48 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
       className="relative w-full h-screen flex items-center justify-center overflow-hidden cursor-none"
       style={{ backgroundColor: 'var(--bg-primary)' }}
       onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      aria-label="Enter the site"
+      onKeyDown={(e) => {
+        // Only activate when the wrapper itself has focus (avoid triggering when inner controls are focused).
+        if (e.target !== e.currentTarget) return
+
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
     >
       {/* Theme Toggle - Top Right */}
       <div className="absolute top-6 right-6 z-30" onClick={(e) => e.stopPropagation()}>
         <ThemeToggle />
       </div>
-      {/* Animated background particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={`absolute w-1 h-1 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`}
-            initial={{
-              x: Math.random() * windowSize.width,
-              y: Math.random() * windowSize.height,
-              opacity: 0.3,
-            }}
-            animate={{
-              y: [null, Math.random() * windowSize.height],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+      {/* Animated background particles (disabled for reduced motion) */}
+      {!shouldReduceMotion && (
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className={`absolute w-1 h-1 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`}
+              initial={{
+                x: Math.random() * windowSize.width,
+                y: Math.random() * windowSize.height,
+                opacity: 0.3,
+              }}
+              animate={{
+                y: [null, Math.random() * windowSize.height],
+                opacity: [0.3, 0.8, 0.3],
+              }}
+              transition={{
+                duration: Math.random() * 3 + 2,
+                repeat: Infinity,
+                delay: Math.random() * 2,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Physics Name Letters */}
       {isReady && !isExiting && <PhysicsName carBounds={carBounds} />}
@@ -231,20 +246,31 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-center"
               >
-                <motion.p
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className={`${isDark ? 'text-white' : 'text-black'} text-xl md:text-2xl font-mono tracking-wider`}
-                >
-                  CLICK TO ENTER
-                </motion.p>
-                <motion.div
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className={`${isDark ? 'text-white' : 'text-black'} text-4xl mt-2`}
-                >
-                  ↓
-                </motion.div>
+                {shouldReduceMotion ? (
+                  <>
+                    <p className={`${isDark ? 'text-white' : 'text-black'} text-xl md:text-2xl font-mono tracking-wider`}>
+                      CLICK TO ENTER
+                    </p>
+                    <div className={`${isDark ? 'text-white' : 'text-black'} text-4xl mt-2`}>↓</div>
+                  </>
+                ) : (
+                  <>
+                    <motion.p
+                      animate={{ opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className={`${isDark ? 'text-white' : 'text-black'} text-xl md:text-2xl font-mono tracking-wider`}
+                    >
+                      CLICK TO ENTER
+                    </motion.p>
+                    <motion.div
+                      animate={{ y: [0, 10, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className={`${isDark ? 'text-white' : 'text-black'} text-4xl mt-2`}
+                    >
+                      ↓
+                    </motion.div>
+                  </>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

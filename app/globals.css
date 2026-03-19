@@ -42,18 +42,12 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-mono);
-  cursor: none !important;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-}
-
-/* Hide default cursor everywhere */
-* {
-  cursor: none !important;
 }
 
 a {
@@ -122,6 +116,13 @@ a {
 .interactive-element:hover {
   transform: translateY(-2px);
   filter: brightness(1.2);
+}
+
+/* Always show a visible focus ring for keyboard users. */
+:focus-visible {
+  outline: 2px solid #E10600;
+  outline-offset: 3px;
+  border-radius: 8px;
 }
 
 /* No selection for UI elements */

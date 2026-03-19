@@ -76,6 +76,21 @@ export default function CustomCursor() {
     }
   }, [cursorX, cursorY, isMobile])
 
+  useEffect(() => {
+    // Hide the native cursor only when the custom cursor is active.
+    if (typeof document === 'undefined') return
+
+    if (isMobile) {
+      document.body.classList.remove('cursor-none')
+      return
+    }
+
+    document.body.classList.add('cursor-none')
+    return () => {
+      document.body.classList.remove('cursor-none')
+    }
+  }, [isMobile])
+
   // Don't render cursor on mobile
   if (isMobile) {
     return null
@@ -84,6 +99,7 @@ export default function CustomCursor() {
   return (
     <motion.div
       className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+      aria-hidden="true"
       style={{
         x: cursorXSpring,
         y: cursorYSpring,
@@ -100,7 +116,7 @@ export default function CustomCursor() {
       >
         <Image
           src="/images/cursor.png"
-          alt="cursor"
+          alt=""
           width={40}
           height={40}
           className="object-contain"

@@ -4,13 +4,17 @@ import CustomCursor from '@/components/ui/CustomCursor'
 import SocialLinks from '@/components/layout/SocialLinks'
 import ThemeProvider from '@/components/ui/ThemeProvider'
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
 export const metadata: Metadata = {
   title: 'Aarya Patel | F1 Engineering & Software',
   description: 'Interactive portfolio showcasing Formula 1 engineering, software development, and powertrain design',
+  metadataBase: new URL(siteUrl),
+  manifest: '/site.webmanifest',
   icons: {
-    icon: '/icon.ico',
-    shortcut: '/icon.ico',
-    apple: '/icon.ico',
+    icon: '/images/favicon.ico',
+    shortcut: '/images/favicon.ico',
+    apple: '/images/favicon.ico',
   },
 }
 
@@ -21,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased cursor-none" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <body className="antialiased" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
         <ThemeProvider />
         <CustomCursor />
         <SocialLinks />

@@ -24,6 +24,11 @@ export const blogPostsQuery = `*[_type == "post"] | order(publishedAt desc) {
   author->{name, image}
 }`
 
+// Only fetch blog slugs for sitemap generation
+export const blogPostSlugsQuery = `*[_type == "post"] | order(publishedAt desc) {
+  slug
+}`
+
 // Gallery item query
 export const galleryItemsQuery = `*[_type == "galleryItem"] | order(_createdAt desc) {
   _id,

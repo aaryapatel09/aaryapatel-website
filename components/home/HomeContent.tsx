@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import { useStore } from '@/store/useStore'
 import EngineWidget from '@/components/widgets/EngineWidget'
@@ -8,6 +8,7 @@ import DashboardCard from '@/components/ui/DashboardCard'
 
 export default function HomeContent() {
   const { toggleEngineWidget, isEngineWidgetOpen } = useStore()
+  const shouldReduceMotion = useReducedMotion()
 
   const sections = [
     {
@@ -111,13 +112,17 @@ export default function HomeContent() {
                   </p>
                   <div className="mt-4 flex items-center text-xs font-mono text-f1-gray">
                     <span>EXPLORE</span>
-                    <motion.span
-                      className="ml-2"
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    >
-                      →
-                    </motion.span>
+                    {shouldReduceMotion ? (
+                      <span className="ml-2">→</span>
+                    ) : (
+                      <motion.span
+                        className="ml-2"
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        →
+                      </motion.span>
+                    )}
                   </div>
                 </DashboardCard>
               </Link>

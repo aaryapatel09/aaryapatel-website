@@ -18,6 +18,7 @@ const navItems = [
 
 export default function Header() {
   const { currentSection, setCurrentSection, isMenuOpen, toggleMenu } = useStore()
+  const menuPanelId = 'mobile-menu-panel'
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-dashboard-bg/80 backdrop-blur-sm border-b border-f1-gray/30">
@@ -90,6 +91,8 @@ export default function Header() {
               onClick={toggleMenu}
               className="p-2 interactive-element"
               aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}
+              aria-controls={menuPanelId}
             >
               <div className="w-6 h-6 flex flex-col justify-center space-y-1.5">
                 <motion.span
@@ -118,6 +121,7 @@ export default function Header() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-dashboard-bg border-t border-f1-gray/30"
+            id={menuPanelId}
           >
             <div className="px-4 py-4 space-y-2">
               {navItems.map((item, index) => (

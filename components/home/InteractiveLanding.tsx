@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import EngineSchematicSVG from '@/components/ui/EngineSchematicSVG'
 
 interface InteractiveLandingProps {
@@ -11,6 +11,7 @@ interface InteractiveLandingProps {
 export default function InteractiveLanding({ onStart }: InteractiveLandingProps) {
   const [isReady, setIsReady] = useState(false)
   const [hoveredPart, setHoveredPart] = useState<string | null>(null)
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     // Simulate system initialization
@@ -114,8 +115,12 @@ export default function InteractiveLanding({ onStart }: InteractiveLandingProps)
               <span className="relative z-10">CLICK TO START</span>
               <motion.div
                 className="absolute inset-0 bg-f1-red opacity-0 group-hover:opacity-20"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                animate={
+                  shouldReduceMotion ? undefined : { scale: [1, 1.2, 1] }
+                }
+                transition={
+                  shouldReduceMotion ? undefined : { duration: 2, repeat: Infinity }
+                }
               />
             </motion.button>
           )}
@@ -130,7 +135,9 @@ export default function InteractiveLanding({ onStart }: InteractiveLandingProps)
           >
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              transition={
+                shouldReduceMotion ? { duration: 0 } : { duration: 1, repeat: Infinity, ease: 'linear' }
+              }
               className="w-4 h-4 border-2 border-f1-red border-t-transparent rounded-full"
             />
             <span>INITIALIZING SYSTEMS...</span>

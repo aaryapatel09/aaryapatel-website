@@ -1,23 +1,37 @@
-'use client'
+import type { Metadata } from 'next'
+import HomeClient from '@/components/pages/HomeClient'
 
-import { useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
-import CarLanding from '@/components/home/CarLanding'
-import MainHub from '@/components/home/MainHub'
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
-export default function Home() {
-  const [showHub, setShowHub] = useState(false)
+export const metadata: Metadata = {
+  title: 'Home | Aarya Patel',
+  description: 'Interactive portfolio showcasing Formula 1 engineering, software development, and powertrain design.',
+  alternates: {
+    canonical: `${siteUrl}/`,
+  },
+  openGraph: {
+    type: 'website',
+    url: `${siteUrl}/`,
+    title: 'Home | Aarya Patel',
+    description:
+      'Interactive portfolio showcasing Formula 1 engineering, software development, and powertrain design.',
+    images: [
+      {
+        url: `${siteUrl}/images/portfolio-car.png`,
+        alt: 'Aarya Patel portfolio',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Home | Aarya Patel',
+    description:
+      'Interactive portfolio showcasing Formula 1 engineering, software development, and powertrain design.',
+    images: [`${siteUrl}/images/portfolio-car.png`],
+  },
+}
 
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
-      <AnimatePresence mode="wait">
-        {!showHub ? (
-          <CarLanding key="car" onEnter={() => setShowHub(true)} />
-        ) : (
-          <MainHub key="hub" />
-        )}
-      </AnimatePresence>
-    </div>
-  )
+export default function HomePage() {
+  return <HomeClient />
 }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useStore } from '@/store/useStore'
@@ -21,6 +21,7 @@ export default function MainHub() {
   const { setCurrentSection } = useStore()
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
+  const shouldReduceMotion = useReducedMotion()
 
   const handleImageError = (iconId: string) => {
     setImageErrors((prev) => ({ ...prev, [iconId]: true }))
@@ -88,26 +89,27 @@ export default function MainHub() {
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating particles */}
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{
-              x: Math.random() * 100 + '%',
-              y: Math.random() * 100 + '%',
-              opacity: 0.1,
-            }}
-            animate={{
-              y: [null, Math.random() * 100 + '%'],
-              opacity: [0.1, 0.5, 0.1],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
+        {!shouldReduceMotion &&
+          [...Array(30)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full"
+              initial={{
+                x: Math.random() * 100 + '%',
+                y: Math.random() * 100 + '%',
+                opacity: 0.1,
+              }}
+              animate={{
+                y: [null, Math.random() * 100 + '%'],
+                opacity: [0.1, 0.5, 0.1],
+              }}
+              transition={{
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+              }}
+            />
+          ))}
         
         {/* Grid lines */}
         <div
@@ -183,6 +185,7 @@ export default function MainHub() {
                     }}
                   >
                     {/* Animated grid pattern */}
+                  {!shouldReduceMotion && (
                     <motion.div
                       className="absolute inset-0 opacity-5"
                       animate={{
@@ -201,6 +204,7 @@ export default function MainHub() {
                         backgroundSize: '20px 20px',
                       }}
                     />
+                  )}
                     
                     {/* Animated corner accents */}
                     {hoveredIcon === icon.id && (
@@ -314,7 +318,7 @@ export default function MainHub() {
                     )}
 
                     {/* Interactive pulse effect on hover */}
-                    {hoveredIcon === icon.id && (
+                    {!shouldReduceMotion && hoveredIcon === icon.id && (
                       <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1.1, opacity: [0, 0.3, 0] }}
@@ -325,16 +329,25 @@ export default function MainHub() {
                   </motion.div>
 
                   {/* Arrow indicator */}
-                  <motion.div
-                    className="absolute -bottom-6 left-1/2 transform -translate-x-1/2"
-                    animate={{
-                      y: hoveredIcon === icon.id ? [0, 8, 0] : [0, 4, 0],
-                      opacity: hoveredIcon === icon.id ? 1 : 0.6,
-                    }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                  >
-                    <span className="text-3xl">↓</span>
-                  </motion.div>
+                  {shouldReduceMotion ? (
+                    <div
+                      className="absolute -bottom-6 left-1/2 transform -translate-x-1/2"
+                      style={{ opacity: hoveredIcon === icon.id ? 1 : 0.6 }}
+                    >
+                      <span className="text-3xl">↓</span>
+                    </div>
+                  ) : (
+                    <motion.div
+                      className="absolute -bottom-6 left-1/2 transform -translate-x-1/2"
+                      animate={{
+                        y: hoveredIcon === icon.id ? [0, 8, 0] : [0, 4, 0],
+                        opacity: hoveredIcon === icon.id ? 1 : 0.6,
+                      }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      <span className="text-3xl">↓</span>
+                    </motion.div>
+                  )}
                 </div>
               </Link>
             </motion.div>
