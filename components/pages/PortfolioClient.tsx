@@ -146,7 +146,7 @@ export default function PortfolioClient() {
     },
   ]
 
-  const categories = ['all', 'software', 'engineering']
+  const categories = ['all', 'software']
 
   const filteredProjects = selectedCategory === 'all' ? projects : projects.filter((p) => p.category === selectedCategory)
 
@@ -225,24 +225,10 @@ export default function PortfolioClient() {
                 }}
               >
                 <DashboardCard
-                  className={`h-full interactive-element cursor-pointer relative ${
-                    project.featured ? 'border-white' : ''
-                  }`}
+                  className="h-full interactive-element cursor-pointer relative"
                 >
-                  {project.featured && (
-                    <motion.div
-                      className="absolute top-3 left-3 px-2 py-1 bg-white text-black text-xs font-racing z-10"
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.1 + 0.3 }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
-                      FEATURED
-                    </motion.div>
-                  )}
-
                   <motion.h3
-                    className={`text-xl font-racing text-white mb-3 ${project.featured ? 'pr-20' : ''}`}
+                    className="text-xl font-racing text-white mb-3"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 + 0.2 }}

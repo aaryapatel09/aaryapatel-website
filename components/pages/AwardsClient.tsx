@@ -23,34 +23,61 @@ export default function AwardsClient() {
 
   const awards: Award[] = [
     {
-      id: '1',
-      title: 'Honorable Mention – NFSPS Manningham Poetry Contest',
-      issuer: 'National Federation of State Poetry Societies',
-      date: 'Mar 2025',
+      id: 'usapho-2026',
+      title: 'U.S. Physics Olympiad (USAPhO) Qualifier',
+      issuer: 'Issued by American Association of Physics Teachers (AAPT)',
+      date: 'Mar 2026',
       description:
-        'Earned an Honorable Mention in one of the nation&apos;s most competitive high school poetry contests, ranking among the top entries nationwide. My poem, "How to Live Inside a Wire," will be published in the 2025 NFSPS Student Prize Winners book, and I received a cash award.',
-      category: 'poetry',
+        'Qualified for the 2026 U.S. Physics Olympiad (USAPhO) exam by scoring above the national cutoff (16) on the F=ma contest, placing among the top 440 of 6,682 high school participants nationwide (~top 7%).',
+      category: 'other',
     },
     {
-      id: '2',
-      title: 'USACO Gold',
-      issuer: 'USA Computing Olympiad (USACO)',
-      date: 'Feb 2025',
+      id: 'fbla-1st-place',
+      title: '1st Place – FBLA Bay Section, Computer Problem Solving',
+      issuer: 'Issued by Future Business Leaders of America',
+      date: 'Feb 2026',
       description:
-        'Achieved a perfect score of 1000/1000 and ranked 1st among all pre-college participants in my division on my first attempt at the USACO Silver Division. This accomplishment highlights my strong algorithmic problem-solving skills, efficiency in coding, and deep understanding of competitive programming concepts.',
+        'Associated with Homestead High School. Ranked 1st among competitors at the 2026 FBLA Bay Section Leadership Conference in the Computer Problem Solving event, an objective test on operating systems, networking, hardware, and security.',
       category: 'programming',
     },
     {
-      id: '3',
-      title: 'Silver Key in Poetry – Scholastic Art & Writing Awards',
-      issuer: 'The Alliance for Young Artists & Writers',
-      date: 'Jan 2025',
+      id: '1',
+      title: 'USACO Platinum',
+      issuer: 'Issued by USA Computing Olympiad (USACO)',
+      date: 'Feb 2026',
       description:
-        'Awarded the Silver Key in the 2025 Scholastic Art & Writing Awards for my poem "The Geography of Us." Recognized for originality, technical skill, and personal voice in creative writing.',
+        'USACO Platinum contestant in the top competitive programming division, reached by only a few hundred students out of thousands worldwide each season. I consistently solve advanced algorithmic problems under time pressure, including dynamic programming, graph algorithms, and data structures. This reflects strong problem-solving, speed, and resilience on hard unseen problems.',
+      category: 'programming',
+    },
+    {
+      id: '2',
+      title: 'Silver Key in Poetry – Scholastic Art & Writing Awards',
+      issuer: 'Issued by The Alliance for Young Artists & Writers',
+      date: 'Jan 2026',
+      description:
+        'Awarded the Silver Key in the 2026 Scholastic Art & Writing Awards for my poem The Ghost In The Gallery. Recognized for originality, technical skill, and personal voice in creative writing.',
+      category: 'poetry',
+    },
+    {
+      id: '3',
+      title: 'Honorable Mention in Personal Essay & Memoir - Scholastic Art & Writing Awards',
+      issuer: 'Issued by The Alliance for Young Artists & Writers',
+      date: 'Dec 2025',
+      description:
+        'Awarded an Honorable Mention in the 2026 Scholastic Art & Writing Awards for my essay "The Year Everyone Else Moved On". Recognized for originality, technical skill, and personal voice in creative writing.',
       category: 'poetry',
     },
     {
       id: '4',
+      title: 'Honorable Mention – NFSPS Manningham Poetry Contest (Senior Division)',
+      issuer: 'Issued by National Federation of State Poetry Societies',
+      date: 'Mar 2025',
+      description:
+        'Earned an Honorable Mention in one of the nation\'s most competitive high school poetry contests, ranking among the top entries nationwide. My poem, How to Live Inside a Wire, will be published in the 2025 NFSPS Student Prize Winners book, and I received a cash award.',
+      category: 'poetry',
+    },
+    {
+      id: 'topical-2024',
       title: 'Topical Winner – American High School Poets Holiday Special',
       issuer: 'Live Poets Society of New Jersey',
       date: 'Dec 2024',
@@ -59,25 +86,16 @@ export default function AwardsClient() {
       category: 'poetry',
     },
     {
-      id: '5',
-      title: 'USACO Silver',
-      issuer: 'USA Computing Olympiad (USACO)',
-      date: 'Dec 2024',
-      description:
-        'Successfully advanced from the Bronze division in the USA Computing Olympiad (USACO), a prestigious competitive programming contest for pre-college students. Demonstrated strong problem-solving skills by solving algorithmic problems involving complete search, simulation, and basic sorting techniques under timed conditions.',
-      category: 'programming',
-    },
-    {
       id: '6',
-      title: 'Gold President&apos;s Volunteer Service Award',
-      issuer: 'The President&apos;s Council on Service and Civic Participation',
+      title: 'Gold President\'s Volunteer Service Award',
+      issuer: 'The President\'s Council on Service and Civic Participation',
       date: 'Jul 2024',
       description: 'Recognized for 100+ hours of community service.',
       category: 'service',
     },
   ]
 
-  const categories = ['all', 'poetry', 'programming', 'service']
+  const categories = ['all', 'poetry', 'programming', 'service', 'other']
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 

@@ -6,18 +6,30 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useStore } from '@/store/useStore'
 
+type SocialLink = {
+  name: string
+  url: string
+  icon: string
+  emoji: string
+  color: string
+  /** Optional uniform scale (1 = default). Use when an asset fills its bbox more than others. */
+  iconScale?: number
+}
+
 export default function SocialLinks() {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   const theme = useStore((state) => state.theme)
   const isDark = theme === 'dark'
 
-  const socialLinks = [
+  const socialLinks: SocialLink[] = [
     {
       name: 'Instagram',
       url: 'https://www.instagram.com/aaryapatel_1/',
       icon: '/images/instagram-icon.png',
       emoji: '📷',
       color: 'hover:bg-gradient-to-br hover:from-purple-500 hover:via-pink-500 hover:to-orange-500',
+      /** Asset fills the bbox more than others; scale down so visual weight matches */
+      iconScale: 0.82,
     },
     {
       name: 'LinkedIn',
@@ -32,6 +44,13 @@ export default function SocialLinks() {
       icon: '/images/github-icon.png',
       emoji: '💻',
       color: 'hover:bg-gray-800',
+    },
+    {
+      name: 'X',
+      url: 'https://x.com/AaryaPatel63558',
+      icon: '/images/x-icon.png',
+      emoji: '𝕏',
+      color: 'hover:bg-neutral-800',
     },
   ]
 
@@ -76,16 +95,20 @@ export default function SocialLinks() {
               {imageErrors[social.name] ? (
                 <span className="text-2xl md:text-5xl">{social.emoji}</span>
               ) : (
-                <div className="w-6 h-6 md:w-14 md:h-14 flex items-center justify-center p-1">
-                  <Image
-                    src={social.icon}
-                    alt={social.name}
-                    width={56}
-                    height={56}
-                    className="object-contain w-full h-full max-w-full max-h-full"
-                    sizes="(max-width: 768px) 24px, 56px"
-                    onError={() => handleImageError(social.name)}
-                  />
+                <div className="relative h-6 w-6 shrink-0 md:h-14 md:w-14">
+                  <div
+                    className="absolute inset-0 origin-center"
+                    style={{ transform: `scale(${social.iconScale ?? 1})` }}
+                  >
+                    <Image
+                      src={social.icon}
+                      alt=""
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 24px, 56px"
+                      onError={() => handleImageError(social.name)}
+                    />
+                  </div>
                 </div>
               )}
             </motion.div>
