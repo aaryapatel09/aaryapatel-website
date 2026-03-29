@@ -60,11 +60,8 @@ export default function AboutClient() {
           <h1 className="text-5xl md:text-7xl font-racing tracking-wider text-white mb-6">
             ABOUT
           </h1>
-          <p className="text-lg font-mono text-gray-300 max-w-3xl">
-            High schooler passionate about AI and machine learning with experience in Python, Java, C++, MATLAB, and
-            CAD. Fascinated by how F1 teams use ML for everything from aerodynamics to race strategy. Equally passionate
-            about AI safety, ensuring the technology I love develops responsibly. Love exploring where software meets
-            mechanical engineering through CAD design and code that could one day help shave milliseconds off lap times.
+          <p className="text-lg font-mono text-gray-300 max-w-3xl leading-relaxed">
+            High school dropout. Constantly building and learning—and open to any interesting opportunities.
           </p>
         </motion.section>
 
@@ -216,7 +213,7 @@ export default function AboutClient() {
             viewport={{ once: true }}
             className="text-3xl font-racing tracking-wider text-white mb-8"
           >
-            ENGINEERING PHILOSOPHY
+            HOW I WORK
           </motion.h2>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -227,26 +224,14 @@ export default function AboutClient() {
           >
             <DashboardCard>
               <motion.p
-                className="text-base font-mono text-gray-300 leading-relaxed mb-4"
+                className="text-base font-mono text-gray-300 leading-relaxed"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
               >
-                I believe in writing clean, maintainable code and building systems that are both performant and elegant.
-                Every project is an opportunity to learn, innovate, and push the boundaries of what&apos;s possible with
-                technology.
-              </motion.p>
-              <motion.p
-                className="text-base font-mono text-gray-300 leading-relaxed"
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-              >
-                Whether it&apos;s crafting intuitive user interfaces, designing scalable architectures, or solving complex
-                engineering challenges, I approach each problem with curiosity, attention to detail, and a focus on creating
-                meaningful impact.
+                I learn by building: shipping, debugging, and digging in until the system makes sense. If you&apos;re
+                working on something ambitious or unusual and need someone who picks things up fast, reach out.
               </motion.p>
             </DashboardCard>
           </motion.div>
