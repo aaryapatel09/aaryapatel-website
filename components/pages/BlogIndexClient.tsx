@@ -3,13 +3,11 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
-import DashboardCard from '@/components/ui/DashboardCard'
 import { useStore } from '@/store/useStore'
 import { sanityClient, blogPostsQuery } from '@/lib/sanity'
 import { format } from 'date-fns'
 import FloatingParticles from '@/components/ui/FloatingParticles'
 import PretextText from '@/components/ui/PretextText'
-import PretextShowcase from '@/components/ui/PretextShowcase'
 
 interface BlogPost {
   _id: string
@@ -132,20 +130,49 @@ export default function BlogIndexClient() {
     }
     return a.title.localeCompare(b.title)
   })
+  const featuredPost = sortedPosts[0]
+  const archivePosts = sortedPosts.slice(1)
 
   return (
     <div className="pt-24 pb-12 min-h-screen bg-black text-white relative overflow-hidden">
       <FloatingParticles count={40} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
-        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-            <h1 className="text-5xl md:text-7xl font-racing tracking-wider text-white mb-6">POETRY</h1>
-            <p className="text-lg font-mono text-gray-300 max-w-3xl mb-4">
-              <span className="text-white font-racing">Ghost in the Machine</span> — A collection exploring the
-              intersection of humanity and technology.
-            </p>
-          </motion.div>
+        <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-16">
+          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-gray-500">
+            Poetry system 01 // ghost in the machine
+          </p>
+
+          <div className="relative overflow-hidden border border-white/10 bg-white/[0.02] px-6 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-14">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-orange-400/60 to-transparent" />
+            <div className="pointer-events-none absolute bottom-6 left-6 h-28 w-28 rounded-full bg-orange-500/10 blur-3xl" />
+
+            <div className="mb-10 max-w-5xl">
+              <p className="mb-6 text-xs uppercase tracking-[0.4em] text-gray-500">
+                A poetry collection about circuitry, memory, and human residue
+              </p>
+              <h1 className="font-racing text-[3rem] leading-none tracking-tight text-white sm:text-[4.5rem] lg:text-[6rem]">
+                GHOST IN THE
+              </h1>
+              <h2 className="font-racing text-[3.1rem] italic leading-none tracking-tight text-orange-300/90 drop-shadow-[0_0_18px_rgba(251,146,60,0.25)] sm:text-[4.75rem] lg:text-[6.4rem]">
+                MACHINE
+              </h2>
+            </div>
+
+            <div className="grid gap-6 text-sm leading-7 text-gray-300 md:grid-cols-3">
+              <p>
+                These poems sit between interface language and private thought. They treat software like weather:
+                ambient, invasive, and impossible to ignore.
+              </p>
+              <p>
+                Pretext fits here when it stays invisible. The goal is not a widget. It is tighter pacing, more
+                deliberate line breaks, and a page that feels typeset instead of boxed in.
+              </p>
+              <p>
+                The visual direction is editorial and cinematic: thin rules, dense columns, sharp titles, and a warm
+                accent that feels closer to taillights than to generic UI chrome.
+              </p>
+            </div>
+          </div>
         </motion.section>
 
         {/* Sort Controls */}
@@ -158,23 +185,25 @@ export default function BlogIndexClient() {
           <span className="text-sm font-mono text-gray-300">SORT BY:</span>
           <button
             onClick={() => setSortBy('date')}
-            className={`px-4 py-2 font-racing text-sm border-2 transition-colors ${
-              sortBy === 'date' ? 'border-white text-white bg-white/10' : 'border-white/30 text-white/70 hover:border-white hover:text-white'
+            className={`px-4 py-2 font-racing text-sm border transition-colors ${
+              sortBy === 'date'
+                ? 'border-white text-white bg-white/10'
+                : 'border-white/20 text-white/60 hover:border-white/50 hover:text-white'
             }`}
           >
             DATE
           </button>
           <button
             onClick={() => setSortBy('title')}
-            className={`px-4 py-2 font-racing text-sm border-2 transition-colors ${
-              sortBy === 'title' ? 'border-white text-white bg-white/10' : 'border-white/30 text-white/70 hover:border-white hover:text-white'
+            className={`px-4 py-2 font-racing text-sm border transition-colors ${
+              sortBy === 'title'
+                ? 'border-white text-white bg-white/10'
+                : 'border-white/20 text-white/60 hover:border-white/50 hover:text-white'
             }`}
           >
             TITLE
           </button>
         </motion.div>
-
-        <PretextShowcase />
 
         {/* Posts List */}
         {loading ? (
@@ -190,85 +219,107 @@ export default function BlogIndexClient() {
             )}
           </div>
         ) : (
-          <div className="space-y-6">
-            <AnimatePresence>
-              {sortedPosts.map((post, index) => (
-                <motion.div
-                  key={post._id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link href={`/blog/${post.slug.current}`}>
-                    <motion.div whileHover={{ scale: 1.02, y: -4 }} whileTap={{ scale: 0.98 }}>
-                      <DashboardCard className="interactive-element relative overflow-hidden group">
-                        {/* Animated background on hover */}
-                        <motion.div
-                          className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          initial={false}
+          <div>
+            {featuredPost && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-12 border-t border-white/20 pt-8"
+              >
+                <Link href={`/blog/${featuredPost.slug.current}`} className="block interactive-element">
+                  <div className="grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.7fr)] lg:items-end">
+                    <div>
+                      <p className="mb-4 text-xs uppercase tracking-[0.35em] text-gray-500">Featured transmission</p>
+                      <PretextText
+                        as="h2"
+                        text={featuredPost.title}
+                        font={'400 56px "Courier New"'}
+                        lineHeight={60}
+                        fit="balance"
+                        className="max-w-4xl font-racing text-4xl leading-none tracking-tight text-white sm:text-5xl lg:text-6xl"
+                      />
+                    </div>
+
+                    <div className="space-y-5 border-l border-white/10 pl-0 lg:pl-8">
+                      <p className="text-xs uppercase tracking-[0.35em] text-gray-500">
+                        {format(new Date(featuredPost.publishedAt), 'MMM dd, yyyy')}
+                      </p>
+                      {featuredPost.excerpt && (
+                        <PretextText
+                          as="p"
+                          text={featuredPost.excerpt}
+                          font={'400 18px "Courier New"'}
+                          lineHeight={30}
+                          className="font-mono text-base italic text-gray-300"
+                        />
+                      )}
+                      <div className="flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-orange-300/80">
+                        <span>Open poem</span>
+                        <span className="text-white/50">/</span>
+                        <span>Read sequence</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            )}
+
+            <div className="border-t border-white/10">
+              <AnimatePresence>
+                {archivePosts.map((post, index) => (
+                  <motion.div
+                    key={post._id}
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -18 }}
+                    transition={{ delay: index * 0.06 }}
+                    className="border-b border-white/10"
+                  >
+                    <Link href={`/blog/${post.slug.current}`} className="group block interactive-element">
+                      <div className="grid gap-6 px-2 py-6 transition-colors duration-300 group-hover:bg-white/[0.03] md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_auto] md:items-start">
+                        <PretextText
+                          as="h3"
+                          text={post.title}
+                          font={titleFont}
+                          lineHeight={32}
+                          fit="balance"
+                          className="font-racing text-2xl leading-tight text-white"
                         />
 
-                        <div className="relative z-10">
-                          <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                            <div className="flex-1 md:pr-6">
-                              <PretextText
-                                as="h2"
-                                text={post.title}
-                                font={titleFont}
-                                lineHeight={32}
-                                fit="balance"
-                                className="mb-2 font-racing text-2xl text-white md:mb-0"
-                              />
-                            </div>
-                            <span className="text-xs font-mono text-gray-300 whitespace-nowrap">
-                              {format(new Date(post.publishedAt), 'MMM dd, yyyy')}
-                            </span>
-                          </div>
+                        <div className="space-y-3">
                           {post.excerpt && (
                             <PretextText
                               as="p"
                               text={post.excerpt}
                               font={excerptFont}
                               lineHeight={24}
-                              fit="balance"
-                              className="mb-4 font-mono text-sm italic text-gray-300"
+                              className="font-mono text-sm italic text-gray-400"
                             />
                           )}
                           {post.categories && post.categories.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-4">
+                            <div className="flex flex-wrap gap-2">
                               {post.categories.map((category) => (
-                                <motion.span
+                                <span
                                   key={category}
-                                  whileHover={{ scale: 1.1 }}
-                                  className="px-2 py-1 text-xs font-mono bg-white/20 text-white border border-white/30 rounded"
+                                  className="border border-white/15 px-2 py-1 text-[10px] uppercase tracking-[0.25em] text-gray-400"
                                 >
                                   {category}
-                                </motion.span>
+                                </span>
                               ))}
                             </div>
                           )}
-                          <div className="mt-4 flex items-center text-xs font-mono text-gray-300">
-                            <span>READ MORE</span>
-                            {shouldReduceMotion ? (
-                              <span className="ml-2">→</span>
-                            ) : (
-                              <motion.span
-                                className="ml-2"
-                                animate={{ x: [0, 5, 0] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                              >
-                                →
-                              </motion.span>
-                            )}
-                          </div>
                         </div>
-                      </DashboardCard>
-                    </motion.div>
-                  </Link>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+
+                        <div className="flex flex-col items-start gap-3 text-xs uppercase tracking-[0.3em] text-gray-500 md:items-end">
+                          <span>{format(new Date(post.publishedAt), 'MMM dd, yyyy')}</span>
+                          <span className="text-orange-300/80 transition-colors group-hover:text-orange-200">Read</span>
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
         )}
       </div>
