@@ -3,9 +3,12 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import PhysicsLetter from './PhysicsLetter'
 import { computePretextLayout, measureCharacters } from '@/lib/pretext'
+import type { LetterTarget } from '@/lib/dustParticle'
 
 interface PhysicsNameProps {
   carBounds?: { x: number; y: number; width: number; height: number }
+  /** Pre-computed letter positions from CarLanding (shared with DustCanvas). */
+  letterTargets?: LetterTarget[]
 }
 
 interface LetterPosition {
@@ -14,7 +17,7 @@ interface LetterPosition {
   index: number
 }
 
-export default function PhysicsName({ carBounds }: PhysicsNameProps) {
+export default function PhysicsName({ carBounds, letterTargets }: PhysicsNameProps) {
   const [containerSize, setContainerSize] = useState({ width: 1920, height: 1080 })
   const [letterPositions, setLetterPositions] = useState<LetterPosition[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
@@ -26,12 +29,12 @@ export default function PhysicsName({ carBounds }: PhysicsNameProps) {
 
   // Split into letters, but keep track of spaces for positioning
   const letters: Array<{ char: string; index: number }> = []
-  name.split('').forEach((char, i) => {
+  name.split('').forEach((char) => {
     if (char !== ' ') {
       letters.push({ char, index: letters.length })
     }
   })
-  
+
   useEffect(() => {
     const updateSize = () => {
       if (containerRef.current) {
@@ -41,13 +44,13 @@ export default function PhysicsName({ carBounds }: PhysicsNameProps) {
         })
       }
     }
-    
+
     updateSize()
     window.addEventListener('resize', updateSize)
-    
+
     return () => window.removeEventListener('resize', updateSize)
   }, [])
-  
+
   const handlePositionUpdate = (index: number, x: number, y: number) => {
     setLetterPositions((prev) => {
       const updated = [...prev]
@@ -61,7 +64,12 @@ export default function PhysicsName({ carBounds }: PhysicsNameProps) {
     })
   }
 
+  // Use pre-computed positions from CarLanding when available, otherwise compute internally
   const targetPositions = useMemo(() => {
+    if (letterTargets && letterTargets.length > 0) {
+      return letterTargets.map(t => ({ x: t.x, y: t.y }))
+    }
+
     if (containerSize.width <= 0 || containerSize.height <= 0) {
       return []
     }
@@ -96,8 +104,8 @@ export default function PhysicsName({ carBounds }: PhysicsNameProps) {
     })
 
     return measuredTargets
-  }, [containerSize.height, containerSize.width, font, isMobile, letterSize, lineHeight, name])
-  
+  }, [letterTargets, containerSize.height, containerSize.width, font, isMobile, letterSize, lineHeight, name])
+
   return (
     <div
       ref={containerRef}
@@ -118,10 +126,10 @@ export default function PhysicsName({ carBounds }: PhysicsNameProps) {
             targetX={targetPositions[letterObj.index]?.x}
             targetY={targetPositions[letterObj.index]?.y}
             letterSize={letterSize}
+            animateEntrance={!!letterTargets}
           />
         </div>
       ))}
     </div>
   )
 }
-

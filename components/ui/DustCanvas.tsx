@@ -1,0 +1,177 @@
+'use client'
+
+import { useEffect, useRef, useCallback } from 'react'
+import type { MotionValue } from 'framer-motion'
+import {
+  type DustParticle,
+  type LetterTarget,
+  spawnParticles,
+  resetAssignment,
+  updateParticles,
+  settledFraction,
+} from '@/lib/dustParticle'
+
+interface DustCanvasProps {
+  progress: MotionValue<number>
+  trackRef: React.RefObject<SVGPathElement | null>
+  pathLength: number
+  letterTargets: LetterTarget[]
+  width: number
+  height: number
+  isDark: boolean
+  onShadowFormed: () => void
+  /** When true the canvas fades out and stops */
+  fading: boolean
+}
+
+const MAX_PARTICLES = 700
+const SPAWN_PER_SAMPLE = 3
+
+export default function DustCanvas({
+  progress,
+  trackRef,
+  pathLength,
+  letterTargets,
+  width,
+  height,
+  isDark,
+  onShadowFormed,
+  fading,
+}: DustCanvasProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const particles = useRef<DustParticle[]>([])
+  const phase = useRef<'spawning' | 'migrating' | 'shadow' | 'fading'>('spawning')
+  const lastProgress = useRef(0)
+  const startTime = useRef(0)
+  const fadeOpacity = useRef(1)
+  const calledShadowFormed = useRef(false)
+  const rafId = useRef(0)
+
+  // Reset when the component mounts
+  useEffect(() => {
+    particles.current = []
+    phase.current = 'spawning'
+    lastProgress.current = 0
+    startTime.current = performance.now() / 1000
+    fadeOpacity.current = 1
+    calledShadowFormed.current = false
+    resetAssignment()
+  }, [])
+
+  // Detect when external fading prop fires
+  useEffect(() => {
+    if (fading) phase.current = 'fading'
+  }, [fading])
+
+  const render = useCallback(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const now = performance.now() / 1000
+    const time = now - startTime.current
+    const dt = 1 / 60 // fixed step for consistency
+
+    const p = progress.get()
+
+    // ---- Phase transitions ----
+    if (phase.current === 'spawning' && p >= 0.99) {
+      phase.current = 'migrating'
+    }
+    if (phase.current === 'migrating') {
+      const frac = settledFraction(particles.current)
+      if (frac > 0.85 && !calledShadowFormed.current) {
+        phase.current = 'shadow'
+        calledShadowFormed.current = true
+        onShadowFormed()
+      }
+    }
+
+    // ---- Spawn particles during driving ----
+    if (phase.current === 'spawning' && letterTargets.length > 0) {
+      const delta = p - lastProgress.current
+      if (delta > 0.002 && particles.current.length < MAX_PARTICLES) {
+        const el = trackRef.current
+        if (el && pathLength > 0) {
+          // Spawn at the trailing erase edge (slightly behind car)
+          const eraseP = p * 0.94
+          const pt = el.getPointAtLength(eraseP * pathLength)
+          const count = Math.min(
+            SPAWN_PER_SAMPLE,
+            MAX_PARTICLES - particles.current.length,
+          )
+          const newParticles = spawnParticles(pt.x, pt.y, count, letterTargets)
+          particles.current.push(...newParticles)
+          lastProgress.current = p
+        }
+      }
+    }
+
+    // ---- Update physics ----
+    updateParticles(particles.current, dt, phase.current, time)
+
+    // ---- Fade out ----
+    if (phase.current === 'fading') {
+      fadeOpacity.current = Math.max(0, fadeOpacity.current - dt * 2.5) // fade over ~0.4s
+      if (fadeOpacity.current <= 0) {
+        // Stop loop — component will unmount soon
+        return
+      }
+    }
+
+    // ---- Draw ----
+    ctx.clearRect(0, 0, width, height)
+    ctx.globalAlpha = fadeOpacity.current
+
+    const baseR = isDark ? 255 : 20
+    const baseG = isDark ? 240 : 20
+    const baseB = isDark ? 200 : 40
+
+    for (let i = 0; i < particles.current.length; i++) {
+      const part = particles.current[i]
+      if (!part.alive) continue
+
+      // Sparkle: brief bright flash
+      const sparkle = Math.sin(time * 8 + part.sparklePhase) > 0.88
+      const opacity = sparkle
+        ? Math.min(1, part.baseOpacity + 0.5)
+        : part.baseOpacity
+      const size = sparkle ? part.size * 1.8 : part.size
+
+      ctx.globalAlpha = fadeOpacity.current * opacity
+      ctx.fillStyle = `rgb(${baseR}, ${baseG}, ${baseB})`
+      ctx.beginPath()
+      ctx.arc(part.x, part.y, size, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Glow halo on sparkle frames
+      if (sparkle) {
+        ctx.globalAlpha = fadeOpacity.current * opacity * 0.3
+        ctx.beginPath()
+        ctx.arc(part.x, part.y, size * 3, 0, Math.PI * 2)
+        ctx.fill()
+      }
+    }
+
+    ctx.globalAlpha = 1
+
+    rafId.current = requestAnimationFrame(render)
+  }, [progress, trackRef, pathLength, letterTargets, width, height, isDark, onShadowFormed])
+
+  // Start/stop the animation loop
+  useEffect(() => {
+    rafId.current = requestAnimationFrame(render)
+    return () => cancelAnimationFrame(rafId.current)
+  }, [render])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={width}
+      height={height}
+      className="absolute inset-0 pointer-events-none"
+      style={{ zIndex: 5 }}
+    />
+  )
+}

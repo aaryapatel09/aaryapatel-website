@@ -16,6 +16,8 @@ interface PhysicsLetterProps {
   targetX?: number
   targetY?: number
   letterSize?: number
+  /** When true the letter pops in from scale 0 with a staggered delay based on index. */
+  animateEntrance?: boolean
 }
 
 export default function PhysicsLetter({
@@ -30,6 +32,7 @@ export default function PhysicsLetter({
   targetX,
   targetY,
   letterSize: preferredLetterSize,
+  animateEntrance = false,
 }: PhysicsLetterProps) {
   const letterRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -299,6 +302,8 @@ export default function PhysicsLetter({
     setIsDragging(false)
   }
   
+  const entranceDelay = animateEntrance ? index * 0.06 : 0
+
   return (
     <motion.div
       ref={letterRef}
@@ -308,6 +313,13 @@ export default function PhysicsLetter({
       onDragStart={handleDragStart}
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
+      initial={animateEntrance ? { scale: 0, opacity: 0 } : undefined}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={
+        animateEntrance
+          ? { type: 'spring', stiffness: 500, damping: 25, delay: entranceDelay }
+          : undefined
+      }
       style={{
         x: xSpring,
         y: ySpring,

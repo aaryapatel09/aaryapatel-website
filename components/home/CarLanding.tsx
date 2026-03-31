@@ -1,11 +1,14 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, animate, useMotionValue, useTransform, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Image from 'next/image'
 import PhysicsName from '@/components/ui/PhysicsName'
+import DustCanvas from '@/components/ui/DustCanvas'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useStore } from '@/store/useStore'
+import { computePretextLayout, measureCharacters } from '@/lib/pretext'
+import type { LetterTarget } from '@/lib/dustParticle'
 
 const DRIVE_DURATION = 5
 const CAR_W = 520
@@ -30,7 +33,7 @@ function buildCircuit(w: number, h: number): string {
 export default function CarLanding({ onEnter }: CarLandingProps) {
   const [isExiting, setIsExiting] = useState(false)
   const [isSettled, setIsSettled] = useState(false)
-  const [isReady, setIsReady] = useState(false)
+  const [shadowFormed, setShadowFormed] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const [size, setSize] = useState({ w: 1440, h: 900 })
   const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
@@ -44,7 +47,41 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
 
   const circuit = buildCircuit(size.w, size.h)
 
-  // Sample x/y directly from the SVG path — no CSS offset-path, no rotation
+  // ---- Lift letter-target computation so DustCanvas + PhysicsName share it ----
+  const letterTargets: LetterTarget[] = useMemo(() => {
+    if (size.w === 0 || size.h === 0) return []
+    const name = 'AARYA PATEL'
+    const isMobile = size.w < 768
+    const letterSize = isMobile ? 40 : 100
+    const font = isMobile ? '700 40px "Courier New"' : '700 100px "Courier New"'
+    const lineHeight = isMobile ? 64 : 120
+
+    const { lines } = computePretextLayout({
+      text: name,
+      font,
+      lineHeight,
+      maxWidth: isMobile ? size.w * 0.52 : size.w * 0.9,
+      fit: isMobile ? 'container' : 'balance',
+    })
+
+    const targets: LetterTarget[] = []
+    const startY = size.h * (isMobile ? 0.14 : 0.1)
+
+    lines.forEach((line, lineIndex) => {
+      const charWidths = measureCharacters(line.text, font)
+      let cursorX = size.w / 2 - line.width / 2
+      Array.from(line.text).forEach((char, ci) => {
+        const w = charWidths[ci] ?? letterSize
+        if (char !== ' ') {
+          targets.push({ x: cursorX, y: startY + lineIndex * lineHeight, char, width: w, height: letterSize })
+        }
+        cursorX += w
+      })
+    })
+    return targets
+  }, [size.w, size.h])
+
+  // ---- Derived motion values ----
   const carX = useTransform(progress, v => {
     if (!trackRef.current) return size.w / 2 - CAR_W / 2
     return trackRef.current.getPointAtLength(v * pathLenRef.current).x - CAR_W / 2
@@ -54,9 +91,11 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
     return trackRef.current.getPointAtLength(v * pathLenRef.current).y - CAR_H / 2
   })
   const carScale = useTransform(progress, [0, 0.25, 0.7, 1], [0.05, 0.12, 0.65, 1.0])
+
+  // Eraser trails 6% BEHIND the car so particles fill the gap
   const eraserDash = useTransform(progress, v => {
     const len = pathLenRef.current
-    return `${v * len * 1.06} ${len}`
+    return `${v * len * 0.94} ${len}`
   })
 
   useEffect(() => {
@@ -66,7 +105,6 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Measure true path length whenever the circuit changes
   useEffect(() => {
     if (trackRef.current) {
       pathLenRef.current = trackRef.current.getTotalLength()
@@ -77,13 +115,13 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
     if (shouldReduceMotion) {
       progress.set(1)
       setIsSettled(true)
-      setIsReady(true)
+      setShadowFormed(true)
       return
     }
     const t = setTimeout(() => {
       animate(progress, 1, {
         duration: DRIVE_DURATION,
-        ease: [0.25, 0.0, 0.1, 1.0], // accelerate hard, brake smoothly into position
+        ease: [0.25, 0.0, 0.1, 1.0],
         onComplete: () => {
           setIsSettled(true)
           setTimeout(() => {
@@ -91,7 +129,6 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
               const rect = settledCarRef.current.getBoundingClientRect()
               setCarBounds({ x: rect.left, y: rect.top, width: rect.width, height: rect.height })
             }
-            setIsReady(true)
           }, 400)
         },
       })
@@ -152,7 +189,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
           strokeLinecap="round"
           fill="none"
         />
-        {/* Eraser: covers track behind the car with bg color */}
+        {/* Eraser: trails behind the car */}
         <motion.path
           d={circuit}
           stroke="var(--bg-primary)"
@@ -163,7 +200,22 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         />
       </svg>
 
-      {/* Driving car — positioned via getPointAtLength, always upright */}
+      {/* Dust particle canvas — spawns from track, migrates to letter positions */}
+      {!shouldReduceMotion && letterTargets.length > 0 && !isExiting && (
+        <DustCanvas
+          progress={progress}
+          trackRef={trackRef}
+          pathLength={pathLenRef.current}
+          letterTargets={letterTargets}
+          width={size.w}
+          height={size.h}
+          isDark={isDark}
+          onShadowFormed={() => setShadowFormed(true)}
+          fading={shadowFormed}
+        />
+      )}
+
+      {/* Driving car */}
       {!isSettled && (
         <motion.div
           className="absolute top-0 left-0 pointer-events-none"
@@ -176,13 +228,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
             willChange: 'transform',
           }}
         >
-          <Image
-            src="/images/f1-car.png"
-            alt=""
-            fill
-            className="object-contain"
-            priority
-          />
+          <Image src="/images/f1-car.png" alt="" fill className="object-contain" priority />
         </motion.div>
       )}
 
@@ -199,13 +245,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
             onMouseLeave={() => setIsHovering(false)}
           >
             <div ref={settledCarRef} className="relative w-[580px] h-[370px] md:w-[740px] md:h-[460px]">
-              <Image
-                src="/images/f1-car.png"
-                alt="Formula One Car"
-                fill
-                className="object-contain"
-                priority
-              />
+              <Image src="/images/f1-car.png" alt="Formula One Car" fill className="object-contain" priority />
             </div>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
@@ -222,8 +262,10 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         )}
       </AnimatePresence>
 
-      {/* Name letters */}
-      {isReady && !isExiting && <PhysicsName carBounds={carBounds} />}
+      {/* Name letters — mount once dust shadow has formed */}
+      {shadowFormed && !isExiting && (
+        <PhysicsName carBounds={carBounds} letterTargets={letterTargets} />
+      )}
 
       {/* Exit fade overlay */}
       {isExiting && (
