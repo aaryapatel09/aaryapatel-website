@@ -24,8 +24,8 @@ interface DustCanvasProps {
   fading: boolean
 }
 
-const MAX_PARTICLES = 1800
-const SPAWN_PER_SAMPLE = 6
+const MAX_PARTICLES = 2400
+const SPAWN_PER_SAMPLE = 8
 
 export default function DustCanvas({
   progress,
@@ -94,8 +94,8 @@ export default function DustCanvas({
       if (delta > 0.001 && particles.current.length < MAX_PARTICLES) {
         const el = trackRef.current
         if (el && pathLength > 0) {
-          // Spawn at the trailing erase edge (slightly behind car)
-          const eraseP = p * 0.94
+          // Spawn at the car's current position
+          const eraseP = p
           const pt = el.getPointAtLength(eraseP * pathLength)
           const count = Math.min(
             SPAWN_PER_SAMPLE,
@@ -127,10 +127,10 @@ export default function DustCanvas({
       // Sparkle: brief bright flash
       const sparkle = Math.sin(time * 10 + part.sparklePhase) > 0.85
 
-      // Golden color palette — warm amber/gold tones
-      const r = isDark ? (sparkle ? 255 : 220 + Math.sin(part.sparklePhase) * 30) : 30
-      const g = isDark ? (sparkle ? 215 : 170 + Math.sin(part.sparklePhase * 1.3) * 25) : 25
-      const b = isDark ? (sparkle ? 80 : 40 + Math.sin(part.sparklePhase * 0.7) * 20) : 10
+      // Silver/white palette — clean bright tones that match the white letters
+      const r = isDark ? (sparkle ? 255 : 200 + Math.sin(part.sparklePhase) * 40) : 40
+      const g = isDark ? (sparkle ? 255 : 200 + Math.sin(part.sparklePhase * 1.3) * 40) : 40
+      const b = isDark ? (sparkle ? 255 : 215 + Math.sin(part.sparklePhase * 0.7) * 40) : 50
 
       const opacity = sparkle
         ? Math.min(1, part.baseOpacity + 0.4)
