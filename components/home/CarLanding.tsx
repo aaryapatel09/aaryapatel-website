@@ -92,10 +92,10 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   })
   const carScale = useTransform(progress, [0, 0.25, 0.7, 1], [0.05, 0.12, 0.65, 1.0])
 
-  // Eraser trails just behind the car — track dissolves where the car has been
+  // Eraser right behind the car — track dissolves as the car drives over it
   const eraserDash = useTransform(progress, v => {
     const len = pathLenRef.current
-    return `${v * len * 0.92} ${len}`
+    return `${v * len * 0.98} ${len}`
   })
 
   useEffect(() => {

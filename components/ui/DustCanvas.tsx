@@ -107,7 +107,7 @@ export default function DustCanvas({
         const el = trackRef.current
         if (el && pathLength > 0) {
           // Spawn at the erase edge where the road is dissolving
-          const trailP = p * 0.92
+          const trailP = p * 0.97
           const pt = el.getPointAtLength(trailP * pathLength)
           const count = Math.min(
             SPAWN_PER_SAMPLE,

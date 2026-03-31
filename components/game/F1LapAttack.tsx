@@ -3,11 +3,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useStore } from '@/store/useStore'
-import {
-  loadLeaderboard,
-  saveToLeaderboard,
-  type LeaderboardEntry,
-} from '@/lib/gameTrack'
+
+interface LeaderboardEntry {
+  name: string
+  time: number
+  date: string
+}
 
 /**
  * F1 Lights Out — Reaction Time Challenge
@@ -36,9 +37,22 @@ export default function F1LapAttack() {
   const theme = useStore(s => s.theme)
   const isDark = theme === 'dark'
 
-  useEffect(() => {
-    setLeaderboard(loadLeaderboard())
+  // Load leaderboard from server
+  const fetchLeaderboard = useCallback(async () => {
+    try {
+      const res = await fetch('/api/leaderboard')
+      if (res.ok) {
+        const data = await res.json()
+        setLeaderboard(data)
+      }
+    } catch {
+      // Silently fail — leaderboard is non-critical
+    }
   }, [])
+
+  useEffect(() => {
+    fetchLeaderboard()
+  }, [fetchLeaderboard])
 
   const cleanup = useCallback(() => {
     clearTimeout(buildTimerRef.current)
@@ -110,14 +124,24 @@ export default function F1LapAttack() {
     }
   }, [phase, startSequence, cleanup, bestTime])
 
-  const handleSubmitScore = () => {
+  const handleSubmitScore = async () => {
     if (!reactionTime || !playerName.trim()) return
-    const lb = saveToLeaderboard({
-      name: playerName.trim().slice(0, 15),
-      time: reactionTime,
-      date: new Date().toISOString().slice(0, 10),
-    })
-    setLeaderboard(lb)
+    try {
+      const res = await fetch('/api/leaderboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: playerName.trim().slice(0, 15),
+          time: reactionTime,
+        }),
+      })
+      if (res.ok) {
+        const lb = await res.json()
+        setLeaderboard(lb)
+      }
+    } catch {
+      // Silently fail
+    }
     setShowNameEntry(false)
   }
 
