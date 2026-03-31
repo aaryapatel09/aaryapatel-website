@@ -1,18 +1,5 @@
 import { NextResponse } from 'next/server'
-
-// Try to use Vercel KV if available, otherwise fall back to in-memory
-let kv: { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<unknown> } | null = null
-
-async function getKV() {
-  if (kv) return kv
-  try {
-    const mod = await import('@vercel/kv')
-    kv = mod.kv
-    return kv
-  } catch {
-    return null
-  }
-}
+import { kv } from '@vercel/kv'
 
 interface LeaderboardEntry {
   name: string
@@ -23,33 +10,22 @@ interface LeaderboardEntry {
 const LB_KEY = 'f1-lights-out-leaderboard'
 const MAX_ENTRIES = 20
 
-// In-memory fallback (resets on cold start, but works without KV setup)
-let memoryFallback: LeaderboardEntry[] = []
-
 async function getEntries(): Promise<LeaderboardEntry[]> {
-  const store = await getKV()
-  if (store) {
-    try {
-      const data = await store.get(LB_KEY)
-      return (data as LeaderboardEntry[]) ?? []
-    } catch {
-      return memoryFallback
-    }
+  try {
+    const data = await kv.get<LeaderboardEntry[]>(LB_KEY)
+    return data ?? []
+  } catch (err) {
+    console.error('KV get error:', err)
+    return []
   }
-  return memoryFallback
 }
 
 async function setEntries(entries: LeaderboardEntry[]): Promise<void> {
-  const store = await getKV()
-  if (store) {
-    try {
-      await store.set(LB_KEY, entries)
-      return
-    } catch {
-      // fall through to memory
-    }
+  try {
+    await kv.set(LB_KEY, entries)
+  } catch (err) {
+    console.error('KV set error:', err)
   }
-  memoryFallback = entries
 }
 
 export async function GET() {
@@ -83,7 +59,8 @@ export async function POST(request: Request) {
     await setEntries(trimmed)
 
     return NextResponse.json(trimmed)
-  } catch {
+  } catch (err) {
+    console.error('Leaderboard POST error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
