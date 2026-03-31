@@ -14,6 +14,8 @@ type SocialLink = {
   color: string
   /** Optional uniform scale (1 = default). Use when an asset fills its bbox more than others. */
   iconScale?: number
+  /** Invert the icon color in light mode (for white-on-transparent PNGs). */
+  invertOnLight?: boolean
 }
 
 export default function SocialLinks() {
@@ -53,6 +55,7 @@ export default function SocialLinks() {
       icon: '/images/x-icon.png',
       emoji: '𝕏',
       color: 'hover:bg-neutral-800',
+      invertOnLight: true,
     },
   ]
 
@@ -100,7 +103,10 @@ export default function SocialLinks() {
                 <div className="relative h-6 w-6 shrink-0 md:h-14 md:w-14">
                   <div
                     className="absolute inset-0 origin-center"
-                    style={{ transform: `scale(${social.iconScale ?? 1})` }}
+                    style={{
+                      transform: `scale(${social.iconScale ?? 1})`,
+                      filter: !isDark && social.invertOnLight ? 'invert(1)' : undefined,
+                    }}
                   >
                     <Image
                       src={social.icon}

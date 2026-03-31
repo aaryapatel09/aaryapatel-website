@@ -92,6 +92,13 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   })
   const carScale = useTransform(progress, [0, 0.25, 0.7, 1], [0.05, 0.12, 0.65, 1.0])
 
+  // Reveal: road draws itself slightly ahead of the car
+  const revealDash = useTransform(progress, v => {
+    const len = pathLenRef.current
+    const drawn = v * len * 1.08  // road appears just ahead of the car
+    return `${drawn} ${len}`
+  })
+
   // Eraser matches the car — track disappears right where the car is
   const eraserDash = useTransform(progress, v => {
     const len = pathLenRef.current
@@ -172,37 +179,59 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         width={size.w}
         height={size.h}
       >
-        {/* Track edge lines */}
-        <path
-          d={circuit}
-          stroke={trackEdgeColor}
-          strokeWidth="52"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Track surface */}
+        {/* Hidden path for measurements */}
         <path
           ref={trackRef}
           d={circuit}
-          stroke={trackColor}
-          strokeWidth="44"
-          strokeLinecap="round"
+          stroke="none"
           fill="none"
         />
-        {/* Dashed center line */}
-        <path
-          d={circuit}
-          stroke={dashColor}
-          strokeWidth="2"
-          strokeDasharray="16 12"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Eraser: matches car position */}
+        {/* Reveal mask — white where road is drawn */}
+        <defs>
+          <mask id="track-reveal-mask">
+            <motion.path
+              d={circuit}
+              stroke="white"
+              strokeWidth="60"
+              strokeLinecap="round"
+              fill="none"
+              style={{ strokeDasharray: revealDash }}
+            />
+          </mask>
+        </defs>
+        {/* All track layers masked to only show where revealed */}
+        <g mask="url(#track-reveal-mask)">
+          {/* Track edge lines */}
+          <path
+            d={circuit}
+            stroke={trackEdgeColor}
+            strokeWidth="42"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Track surface */}
+          <path
+            d={circuit}
+            stroke={trackColor}
+            strokeWidth="34"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Dashed center line */}
+          <path
+            d={circuit}
+            stroke={dashColor}
+            strokeWidth="2"
+            strokeDasharray="16 12"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </g>
+        {/* Eraser: wipes track behind the car */}
         <motion.path
           d={circuit}
           stroke="var(--bg-primary)"
-          strokeWidth="58"
+          strokeWidth="48"
           strokeLinecap="round"
           fill="none"
           style={{ strokeDasharray: eraserDash }}

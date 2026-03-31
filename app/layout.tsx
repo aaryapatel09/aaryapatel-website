@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import CustomCursor from '@/components/ui/CustomCursor'
+import ConsoleGreeting from '@/components/ui/ConsoleGreeting'
 import SocialLinks from '@/components/layout/SocialLinks'
 import ThemeProvider from '@/components/ui/ThemeProvider'
 
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body className="antialiased" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
         <ThemeProvider />
         <CustomCursor />
+        <ConsoleGreeting />
         <SocialLinks />
         <main className="min-h-screen">
           {children}
