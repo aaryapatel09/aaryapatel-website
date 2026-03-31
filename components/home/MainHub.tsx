@@ -4,8 +4,11 @@ import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { useStore } from '@/store/useStore'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+
+const F1LapAttack = dynamic(() => import('@/components/game/F1LapAttack'), { ssr: false })
 
 interface HubIcon {
   id: string
@@ -364,7 +367,22 @@ export default function MainHub() {
           <p className="text-gray-400 text-sm font-mono">
             Hover and click to explore
           </p>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="mt-8"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <p className="text-gray-500 text-xs font-mono mb-2">Scroll down to play</p>
+            <span className="text-gray-500 text-2xl">↓</span>
+          </motion.div>
         </motion.div>
+
+        {/* F1 Lap Attack Game Section */}
+        <div className="mt-24 mb-16 px-4">
+          <F1LapAttack />
+        </div>
       </div>
     </motion.div>
   )

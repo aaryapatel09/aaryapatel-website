@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import CustomCursor from '@/components/ui/CustomCursor'
 import ConsoleGreeting from '@/components/ui/ConsoleGreeting'
+import EasterEggs from '@/components/ui/EasterEggs'
 import SocialLinks from '@/components/layout/SocialLinks'
 import ThemeProvider from '@/components/ui/ThemeProvider'
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         <ThemeProvider />
         <CustomCursor />
         <ConsoleGreeting />
+        <EasterEggs />
         <SocialLinks />
         <main className="min-h-screen">
           {children}
