@@ -166,11 +166,12 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         <ThemeToggle />
       </div>
 
-      {/* Circuit SVG */}
+      {/* Circuit SVG — hide entirely once car is settled */}
       <svg
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none transition-opacity duration-500"
         width={size.w}
         height={size.h}
+        style={{ opacity: isSettled ? 0 : 1 }}
       >
         {/* Track edge lines */}
         <path

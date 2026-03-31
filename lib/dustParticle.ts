@@ -87,8 +87,11 @@ export function spawnParticles(
 ): DustParticle[] {
   const out: DustParticle[] = []
   for (let i = 0; i < count; i++) {
-    const angle = Math.random() * Math.PI * 2
-    const speed = 30 + Math.random() * 80
+    // Bias angle upward (-PI/2 ± spread) so dust rises off the track
+    const baseAngle = -Math.PI / 2
+    const spread = Math.PI * 0.8
+    const angle = baseAngle + (Math.random() - 0.5) * spread * 2
+    const speed = 40 + Math.random() * 100
     const ti = _nextAssign % targets.length
     _nextAssign++
     const t = targets[ti]
@@ -108,8 +111,8 @@ export function spawnParticles(
     }
 
     out.push({
-      x: x + (Math.random() - 0.5) * 30,
-      y: y + (Math.random() - 0.5) * 30,
+      x: x + (Math.random() - 0.5) * 50,
+      y: y + (Math.random() - 0.5) * 50,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
       targetX: tx,
