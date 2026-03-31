@@ -1,10 +1,12 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
 import FloatingParticles from '@/components/ui/FloatingParticles'
+import PretextText from '@/components/ui/PretextText'
 
 export interface BlogPost {
   _id: string
@@ -21,6 +23,23 @@ export interface BlogPost {
 }
 
 export default function BlogPostClient({ post }: { post: BlogPost }) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const updateViewport = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    updateViewport()
+    window.addEventListener('resize', updateViewport)
+
+    return () => window.removeEventListener('resize', updateViewport)
+  }, [])
+
+  const titleFont = isMobile ? '400 36px "Courier New"' : '400 64px "Courier New"'
+  const titleLineHeight = isMobile ? 44 : 72
+  const bodyFont = '400 16px "Courier New"'
+
   return (
     <div className="pt-24 pb-12 min-h-screen bg-black text-white relative overflow-hidden">
       <FloatingParticles count={30} />
@@ -33,7 +52,15 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
         </Link>
 
         <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-4xl md:text-6xl font-racing tracking-wider text-white mb-6">{post.title}</h1>
+          <PretextText
+            as="h1"
+            text={post.title}
+            font={titleFont}
+            lineHeight={titleLineHeight}
+            fit="balance"
+            align="center"
+            className="mb-6 font-racing text-4xl tracking-wider text-white md:text-6xl"
+          />
 
           <div className="flex flex-wrap items-center gap-4 mb-8 text-sm font-mono text-gray-300">
             <span>{format(new Date(post.publishedAt), 'MMM dd, yyyy')}</span>
@@ -70,7 +97,7 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="text-base font-mono text-gray-300 leading-relaxed whitespace-pre-line"
+                className="text-base font-mono text-gray-300"
               >
                 {post.body.split('\n\n').map((paragraph, idx) => (
                   <motion.p
@@ -80,7 +107,14 @@ export default function BlogPostClient({ post }: { post: BlogPost }) {
                     transition={{ delay: idx * 0.1, duration: 0.5 }}
                     className="mb-4"
                   >
-                    {paragraph}
+                    <PretextText
+                      as="span"
+                      text={paragraph}
+                      font={bodyFont}
+                      lineHeight={28}
+                      whiteSpace="pre-wrap"
+                      className="block font-mono text-base text-gray-300"
+                    />
                   </motion.p>
                 ))}
               </motion.div>

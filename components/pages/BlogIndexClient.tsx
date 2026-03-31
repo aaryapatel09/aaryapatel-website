@@ -8,6 +8,8 @@ import { useStore } from '@/store/useStore'
 import { sanityClient, blogPostsQuery } from '@/lib/sanity'
 import { format } from 'date-fns'
 import FloatingParticles from '@/components/ui/FloatingParticles'
+import PretextText from '@/components/ui/PretextText'
+import PretextShowcase from '@/components/ui/PretextShowcase'
 
 interface BlogPost {
   _id: string
@@ -25,6 +27,8 @@ export default function BlogIndexClient() {
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState<'date' | 'title'>('date')
   const shouldReduceMotion = useReducedMotion()
+  const titleFont = '400 24px "Courier New"'
+  const excerptFont = '400 14px "Courier New"'
 
   useEffect(() => {
     setCurrentSection('blog')
@@ -170,6 +174,8 @@ export default function BlogIndexClient() {
           </button>
         </motion.div>
 
+        <PretextShowcase />
+
         {/* Posts List */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -205,15 +211,29 @@ export default function BlogIndexClient() {
 
                         <div className="relative z-10">
                           <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                            <h2 className="text-2xl font-racing text-white mb-2 md:mb-0">{post.title}</h2>
+                            <div className="flex-1 md:pr-6">
+                              <PretextText
+                                as="h2"
+                                text={post.title}
+                                font={titleFont}
+                                lineHeight={32}
+                                fit="balance"
+                                className="mb-2 font-racing text-2xl text-white md:mb-0"
+                              />
+                            </div>
                             <span className="text-xs font-mono text-gray-300 whitespace-nowrap">
                               {format(new Date(post.publishedAt), 'MMM dd, yyyy')}
                             </span>
                           </div>
                           {post.excerpt && (
-                            <p className="text-sm font-mono text-gray-300 mb-4 italic leading-relaxed">
-                              {post.excerpt}
-                            </p>
+                            <PretextText
+                              as="p"
+                              text={post.excerpt}
+                              font={excerptFont}
+                              lineHeight={24}
+                              fit="balance"
+                              className="mb-4 font-mono text-sm italic text-gray-300"
+                            />
                           )}
                           {post.categories && post.categories.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-4">

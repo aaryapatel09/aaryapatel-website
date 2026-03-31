@@ -13,6 +13,9 @@ interface PhysicsLetterProps {
   carBounds?: { x: number; y: number; width: number; height: number }
   otherLetters?: Array<{ x: number; y: number; index: number }>
   onPositionUpdate?: (index: number, x: number, y: number) => void
+  targetX?: number
+  targetY?: number
+  letterSize?: number
 }
 
 export default function PhysicsLetter({
@@ -24,6 +27,9 @@ export default function PhysicsLetter({
   carBounds,
   otherLetters = [],
   onPositionUpdate,
+  targetX,
+  targetY,
+  letterSize: preferredLetterSize,
 }: PhysicsLetterProps) {
   const letterRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -43,7 +49,7 @@ export default function PhysicsLetter({
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
   
-  const letterSize = isMobile ? 40 : 100
+  const letterSize = preferredLetterSize ?? (isMobile ? 40 : 100)
   const spacing = isMobile ? 8 : 15
   const spaceWidth = isMobile ? 20 : 40 // Width of space between words
   
@@ -51,7 +57,10 @@ export default function PhysicsLetter({
   let initialX: number
   let initialY: number
   
-  if (isMobile) {
+  if (typeof targetX === 'number' && typeof targetY === 'number') {
+    initialX = targetX
+    initialY = targetY
+  } else if (isMobile) {
     // On mobile: stack "AARYA" and "PATEL" vertically (two lines)
     const firstWordWidth = 5 * (letterSize + spacing) - spacing
     if (index < 5) {
@@ -91,7 +100,10 @@ export default function PhysicsLetter({
     let resetX: number
     let resetY: number
     
-    if (isMobile) {
+    if (typeof targetX === 'number' && typeof targetY === 'number') {
+      resetX = targetX
+      resetY = targetY
+    } else if (isMobile) {
       // On mobile: stack "AARYA" and "PATEL" vertically (two lines)
       const firstWordWidth = 5 * (letterSize + spacing) - spacing
       if (index < 5) {
@@ -120,7 +132,7 @@ export default function PhysicsLetter({
     x.set(resetX)
     y.set(resetY)
     setVelocity({ x: 0, y: 0 })
-  }, [containerWidth, containerHeight, index, x, y, isMobile, letterSize, spacing, spaceWidth]) // Reset when container size changes
+  }, [containerWidth, containerHeight, index, isMobile, letterSize, spacing, spaceWidth, targetX, targetY, x, y]) // Reset when container size changes
   
   // Jiggle animation when not dragging (disabled on mobile to keep letters in order)
   useEffect(() => {
@@ -138,7 +150,7 @@ export default function PhysicsLetter({
     }, jiggleInterval)
     
     return () => clearInterval(interval)
-  }, [isDragging, isMobile, x, y])
+  }, [isDragging, isMobile, shouldReduceMotion, x, y])
   
   // Physics simulation (disabled on mobile to keep letters in order)
   useEffect(() => {
@@ -255,7 +267,21 @@ export default function PhysicsLetter({
     return () => {
       if (animationFrame) cancelAnimationFrame(animationFrame)
     }
-  }, [isDragging, isMobile, x, y, velocity, containerWidth, containerHeight, carBounds, letterSize, otherLetters, index, onPositionUpdate])
+  }, [
+    carBounds,
+    containerHeight,
+    containerWidth,
+    index,
+    isDragging,
+    isMobile,
+    letterSize,
+    onPositionUpdate,
+    otherLetters,
+    shouldReduceMotion,
+    velocity,
+    x,
+    y,
+  ])
   
   const handleDragStart = () => {
     if (isMobile) return // Disable dragging on mobile
@@ -293,13 +319,11 @@ export default function PhysicsLetter({
       whileTap={isMobile ? {} : { scale: 0.95 }}
     >
       <motion.div
-        className={`font-bold select-none ${
-          isMobile 
-            ? 'text-3xl md:text-5xl lg:text-7xl' 
-            : 'text-7xl md:text-9xl lg:text-[10rem]'
-        }`}
+        className="select-none font-bold"
         style={{
-          fontFamily: 'system-ui, -apple-system, sans-serif',
+          fontFamily: '"Courier New", monospace',
+          fontSize: `${letterSize}px`,
+          lineHeight: 1,
           color: isDark ? 'white' : 'black',
           textShadow: isMobile 
             ? isDark
@@ -310,7 +334,7 @@ export default function PhysicsLetter({
               : '0 0 30px rgba(0, 0, 0, 0.6), 0 0 60px rgba(0, 0, 0, 0.3)',
           WebkitTextStroke: isMobile 
             ? isDark ? '2px white' : '2px black'
-            : isDark ? '3px white' : '3px black',
+            : isDark ? `${Math.max(3, Math.round(letterSize * 0.03))}px white` : `${Math.max(3, Math.round(letterSize * 0.03))}px black`,
           WebkitTextFillColor: isDark ? 'transparent' : 'black',
           filter: isDark 
             ? 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.8))'
