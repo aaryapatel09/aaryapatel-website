@@ -27,8 +27,8 @@ export function buildTrackPoints(w: number, h: number): TrackPoint[] {
   return points
 }
 
-/** Track half-width (distance from centerline to edge) */
-export const TRACK_HALF_WIDTH = 40
+/** Track half-width (distance from centerline to edge) — wide & forgiving */
+export const TRACK_HALF_WIDTH = 55
 
 /** Check if a point is on the track surface */
 export function isOnTrack(
@@ -130,14 +130,14 @@ export interface InputState {
   right: boolean
 }
 
-const MAX_SPEED = 7
-const MAX_SPEED_DRS = 9
-const ACCELERATION = 0.15
-const BRAKE = 0.25
-const FRICTION = 0.02
-const OFF_TRACK_FRICTION = 0.08
-const TURN_SPEED = 0.045
-const TURN_SPEED_AT_SPEED = 0.032
+const MAX_SPEED = 8
+const MAX_SPEED_DRS = 10.5
+const ACCELERATION = 0.22
+const BRAKE = 0.3
+const FRICTION = 0.015
+const OFF_TRACK_FRICTION = 0.04
+const TURN_SPEED = 0.06
+const TURN_SPEED_AT_SPEED = 0.045
 
 /** Update car physics for one frame */
 export function updateCar(
@@ -152,8 +152,21 @@ export function updateCar(
   if (input.left) car.angle -= turnRate * Math.min(1, car.speed / 2)
   if (input.right) car.angle += turnRate * Math.min(1, car.speed / 2)
 
-  // DRS check
+  // Steering assist — gently nudge toward the track center when near edges
   const nearIdx = nearestTrackIndex(car.x, car.y, trackPoints)
+  const nearPt = trackPoints[nearIdx]
+  const distToCenter = Math.sqrt((car.x - nearPt.x) ** 2 + (car.y - nearPt.y) ** 2)
+  if (distToCenter > TRACK_HALF_WIDTH * 0.6 && car.speed > 1) {
+    const toCenter = Math.atan2(nearPt.y - car.y, nearPt.x - car.x)
+    let angleDiff = toCenter - car.angle
+    // Normalize to [-PI, PI]
+    while (angleDiff > Math.PI) angleDiff -= Math.PI * 2
+    while (angleDiff < -Math.PI) angleDiff += Math.PI * 2
+    const assistStrength = 0.015 * Math.min(1, (distToCenter - TRACK_HALF_WIDTH * 0.6) / 20)
+    car.angle += angleDiff * assistStrength
+  }
+
+  // DRS check
   car.drsActive = isInDRS(nearIdx, drsZones) && car.speed > 3
   const maxSpd = car.drsActive ? MAX_SPEED_DRS : MAX_SPEED
 

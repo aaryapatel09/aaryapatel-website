@@ -106,8 +106,8 @@ export default function DustCanvas({
       if (delta > 0.001 && particles.current.length < MAX_PARTICLES) {
         const el = trackRef.current
         if (el && pathLength > 0) {
-          // Spawn just behind the car where the road is dissolving
-          const trailP = p * 0.93
+          // Spawn at the erase edge where the road is dissolving
+          const trailP = p * 0.92
           const pt = el.getPointAtLength(trailP * pathLength)
           const count = Math.min(
             SPAWN_PER_SAMPLE,

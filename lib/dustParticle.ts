@@ -146,9 +146,11 @@ export function updateParticles(
     p.age += clampedDt
 
     if (globalPhase === 'spawning') {
-      // Dissolve: drift outward with friction
-      p.vx *= 0.94
-      p.vy *= 0.94
+      // Dissolve: drift outward with upward float — looks like dust rising from the track
+      p.vx *= 0.93
+      p.vy *= 0.93
+      // Add a gentle upward drift so particles float up naturally
+      p.vy -= 12 * clampedDt
       p.x += p.vx * clampedDt
       p.y += p.vy * clampedDt
     } else if (globalPhase === 'migrating' || p.phase === 'migrate') {
