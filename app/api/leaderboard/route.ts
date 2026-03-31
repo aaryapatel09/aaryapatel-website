@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { kv } from '@vercel/kv'
+import Redis from 'ioredis'
 
 interface LeaderboardEntry {
   name: string
@@ -10,21 +10,40 @@ interface LeaderboardEntry {
 const LB_KEY = 'f1-lights-out-leaderboard'
 const MAX_ENTRIES = 20
 
+// Connect using the KV_REDIS_URL env var from Vercel Redis integration
+let redis: Redis | null = null
+
+function getRedis(): Redis | null {
+  if (redis) return redis
+  const url = process.env.KV_REDIS_URL
+  if (!url) {
+    console.error('Missing KV_REDIS_URL environment variable')
+    return null
+  }
+  redis = new Redis(url, { lazyConnect: true, maxRetriesPerRequest: 1 })
+  return redis
+}
+
 async function getEntries(): Promise<LeaderboardEntry[]> {
+  const client = getRedis()
+  if (!client) return []
   try {
-    const data = await kv.get<LeaderboardEntry[]>(LB_KEY)
-    return data ?? []
+    const data = await client.get(LB_KEY)
+    if (!data) return []
+    return JSON.parse(data) as LeaderboardEntry[]
   } catch (err) {
-    console.error('KV get error:', err)
+    console.error('Redis get error:', err)
     return []
   }
 }
 
 async function setEntries(entries: LeaderboardEntry[]): Promise<void> {
+  const client = getRedis()
+  if (!client) return
   try {
-    await kv.set(LB_KEY, entries)
+    await client.set(LB_KEY, JSON.stringify(entries))
   } catch (err) {
-    console.error('KV set error:', err)
+    console.error('Redis set error:', err)
   }
 }
 
