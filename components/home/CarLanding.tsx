@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, animate, useMotionValue, useTransform, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Image from 'next/image'
+import PhysicsName from '@/components/ui/PhysicsName'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useStore } from '@/store/useStore'
 
@@ -26,9 +27,12 @@ function buildCircuit(w: number, h: number): string {
 export default function CarLanding({ onEnter }: CarLandingProps) {
   const [isExiting, setIsExiting] = useState(false)
   const [isSettled, setIsSettled] = useState(false)
+  const [isReady, setIsReady] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const [size, setSize] = useState({ w: 1440, h: 900 })
+  const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
   const trackRef = useRef<SVGPathElement>(null)
+  const settledCarRef = useRef<HTMLDivElement>(null)
   const [pathLen, setPathLen] = useState(1400)
   const progress = useMotionValue(0)
   const theme = useStore(s => s.theme)
@@ -61,13 +65,24 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
     if (shouldReduceMotion) {
       progress.set(1)
       setIsSettled(true)
+      setIsReady(true)
       return
     }
     const t = setTimeout(() => {
       animate(progress, 1, {
         duration: DRIVE_DURATION,
         ease: [0.12, 0.0, 0.28, 1.0], // slow at back, accelerates, eases into arrival
-        onComplete: () => setIsSettled(true),
+        onComplete: () => {
+          setIsSettled(true)
+          // Give the settled car's fade-in (0.35s) time to finish before showing letters
+          setTimeout(() => {
+            if (settledCarRef.current) {
+              const rect = settledCarRef.current.getBoundingClientRect()
+              setCarBounds({ x: rect.left, y: rect.top, width: rect.width, height: rect.height })
+            }
+            setIsReady(true)
+          }, 400)
+        },
       })
     }, 400)
     return () => clearTimeout(t)
@@ -144,7 +159,6 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
           style={{
             offsetPath: `path('${circuit}')`,
             offsetDistance: offsetDist,
-            offsetRotate: 'auto',
             scale: carScale,
             width: 520,
             height: 320,
@@ -173,7 +187,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
-            <div className="relative w-[580px] h-[370px] md:w-[740px] md:h-[460px]">
+            <div ref={settledCarRef} className="relative w-[580px] h-[370px] md:w-[740px] md:h-[460px]">
               <Image
                 src="/images/f1-car.png"
                 alt="Formula One Car"
@@ -196,6 +210,9 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Name letters — appear after car settles */}
+      {isReady && !isExiting && <PhysicsName carBounds={carBounds} />}
 
       {/* Exit fade overlay */}
       {isExiting && (
