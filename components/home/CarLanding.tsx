@@ -92,10 +92,10 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   })
   const carScale = useTransform(progress, [0, 0.25, 0.7, 1], [0.05, 0.12, 0.65, 1.0])
 
-  // Eraser runs slightly ahead of the car so the track vanishes before car arrives
+  // Eraser matches the car — track disappears right where the car is
   const eraserDash = useTransform(progress, v => {
     const len = pathLenRef.current
-    return `${v * len * 1.03} ${len}`
+    return `${v * len * 0.995} ${len}`
   })
 
   useEffect(() => {
@@ -139,11 +139,12 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   const handleClick = () => {
     if (!isSettled) return
     setIsExiting(true)
-    setTimeout(onEnter, 800)
+    setTimeout(onEnter, 1200)
   }
 
-  const trackColor = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.18)'
-  const dashColor  = isDark ? 'rgba(255,255,255,0.40)' : 'rgba(0,0,0,0.40)'
+  const trackColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'
+  const trackEdgeColor = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)'
+  const dashColor  = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'
 
   return (
     <motion.div
@@ -171,12 +172,20 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         width={size.w}
         height={size.h}
       >
+        {/* Track edge lines */}
+        <path
+          d={circuit}
+          stroke={trackEdgeColor}
+          strokeWidth="52"
+          strokeLinecap="round"
+          fill="none"
+        />
         {/* Track surface */}
         <path
           ref={trackRef}
           d={circuit}
           stroke={trackColor}
-          strokeWidth="28"
+          strokeWidth="44"
           strokeLinecap="round"
           fill="none"
         />
@@ -189,11 +198,11 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
           strokeLinecap="round"
           fill="none"
         />
-        {/* Eraser: trails behind the car */}
+        {/* Eraser: matches car position */}
         <motion.path
           d={circuit}
           stroke="var(--bg-primary)"
-          strokeWidth="34"
+          strokeWidth="58"
           strokeLinecap="round"
           fill="none"
           style={{ strokeDasharray: eraserDash }}
@@ -234,12 +243,19 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
 
       {/* Settled: large centered car + click prompt */}
       <AnimatePresence>
-        {isSettled && !isExiting && (
+        {isSettled && (
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: isHovering ? 1.03 : 1 }}
+            animate={{
+              opacity: 1,
+              scale: isExiting ? 8 : isHovering ? 1.03 : 1,
+            }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={
+              isExiting
+                ? { duration: 1.2, ease: [0.4, 0, 0.2, 1] }
+                : { duration: 0.35 }
+            }
             className="absolute inset-0 flex flex-col items-center justify-center z-10"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
@@ -247,17 +263,19 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
             <div ref={settledCarRef} className="relative w-[580px] h-[370px] md:w-[740px] md:h-[460px]">
               <Image src="/images/f1-car.png" alt="Formula One Car" fill className="object-contain" priority />
             </div>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: [0.5, 1, 0.5], y: 0 }}
-              transition={{
-                opacity: { duration: 1.5, repeat: Infinity, delay: 0.25 },
-                y: { duration: 0.35, delay: 0.15 },
-              }}
-              className={`mt-5 text-lg md:text-xl font-mono tracking-[0.35em] ${isDark ? 'text-white' : 'text-black'}`}
-            >
-              CLICK TO ENTER
-            </motion.p>
+            {!isExiting && (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: [0.5, 1, 0.5], y: 0 }}
+                transition={{
+                  opacity: { duration: 1.5, repeat: Infinity, delay: 0.25 },
+                  y: { duration: 0.35, delay: 0.15 },
+                }}
+                className={`mt-5 text-lg md:text-xl font-mono tracking-[0.35em] ${isDark ? 'text-white' : 'text-black'}`}
+              >
+                CLICK TO ENTER
+              </motion.p>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

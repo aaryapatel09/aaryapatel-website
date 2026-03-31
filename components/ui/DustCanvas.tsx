@@ -5,10 +5,12 @@ import type { MotionValue } from 'framer-motion'
 import {
   type DustParticle,
   type LetterTarget,
+  type GlyphMask,
   spawnParticles,
   resetAssignment,
   updateParticles,
   settledFraction,
+  buildGlyphMasks,
 } from '@/lib/dustParticle'
 
 interface DustCanvasProps {
@@ -46,6 +48,16 @@ export default function DustCanvas({
   const fadeOpacity = useRef(1)
   const calledShadowFormed = useRef(false)
   const rafId = useRef(0)
+  const glyphMasks = useRef<GlyphMask[]>([])
+
+  // Build glyph masks once when letter targets change
+  useEffect(() => {
+    if (letterTargets.length > 0) {
+      const isMobile = width < 768
+      const font = isMobile ? '700 40px "Courier New"' : '700 100px "Courier New"'
+      glyphMasks.current = buildGlyphMasks(letterTargets, font)
+    }
+  }, [letterTargets, width])
 
   // Reset when the component mounts
   useEffect(() => {
@@ -94,14 +106,14 @@ export default function DustCanvas({
       if (delta > 0.001 && particles.current.length < MAX_PARTICLES) {
         const el = trackRef.current
         if (el && pathLength > 0) {
-          // Spawn at the car's current position
-          const eraseP = p
-          const pt = el.getPointAtLength(eraseP * pathLength)
+          // Spawn just behind the car where the road is dissolving
+          const trailP = p * 0.93
+          const pt = el.getPointAtLength(trailP * pathLength)
           const count = Math.min(
             SPAWN_PER_SAMPLE,
             MAX_PARTICLES - particles.current.length,
           )
-          const newParticles = spawnParticles(pt.x, pt.y, count, letterTargets)
+          const newParticles = spawnParticles(pt.x, pt.y, count, letterTargets, glyphMasks.current)
           particles.current.push(...newParticles)
           lastProgress.current = p
         }
