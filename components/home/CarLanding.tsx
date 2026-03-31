@@ -7,20 +7,23 @@ import PhysicsName from '@/components/ui/PhysicsName'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useStore } from '@/store/useStore'
 
-const DRIVE_DURATION = 4.5
+const DRIVE_DURATION = 5
+const CAR_W = 520
+const CAR_H = 330
 
 interface CarLandingProps {
   onEnter: () => void
 }
 
-// Open path: starts upper-center (far/small), sweeps clockwise right then down, arrives center (close/large)
+// Wide sweeping circuit: top-center → right → bottom → left → center arrival
 function buildCircuit(w: number, h: number): string {
   const cx = w / 2
   return [
-    `M ${cx} ${h * 0.11}`,
-    `C ${w * 0.77} ${h * 0.07} ${w * 0.93} ${h * 0.21} ${w * 0.91} ${h * 0.39}`,
-    `C ${w * 0.89} ${h * 0.57} ${w * 0.76} ${h * 0.70} ${w * 0.62} ${h * 0.76}`,
-    `C ${w * 0.55} ${h * 0.80} ${w * 0.52} ${h * 0.82} ${cx} ${h * 0.50}`,
+    `M ${cx} ${h * 0.08}`,
+    `C ${w * 0.82} ${h * 0.04} ${w * 0.95} ${h * 0.25} ${w * 0.90} ${h * 0.42}`,
+    `C ${w * 0.85} ${h * 0.59} ${w * 0.72} ${h * 0.74} ${w * 0.52} ${h * 0.78}`,
+    `C ${w * 0.32} ${h * 0.82} ${w * 0.16} ${h * 0.72} ${w * 0.13} ${h * 0.55}`,
+    `C ${w * 0.10} ${h * 0.38} ${w * 0.25} ${h * 0.32} ${cx} ${h * 0.48}`,
   ].join(' ')
 }
 
@@ -32,8 +35,8 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   const [size, setSize] = useState({ w: 1440, h: 900 })
   const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
   const trackRef = useRef<SVGPathElement>(null)
+  const pathLenRef = useRef(2000)
   const settledCarRef = useRef<HTMLDivElement>(null)
-  const [pathLen, setPathLen] = useState(1400)
   const progress = useMotionValue(0)
   const theme = useStore(s => s.theme)
   const isDark = theme === 'dark'
@@ -41,11 +44,20 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
 
   const circuit = buildCircuit(size.w, size.h)
 
-  // All motion derived from a single progress value (0 → 1)
-  const offsetDist = useTransform(progress, v => `${v * 100}%`)
-  const carScale = useTransform(progress, [0, 0.3, 0.75, 1], [0.06, 0.15, 0.72, 1.0])
-  // Eraser draws from path start to current car position, covering the track behind it
-  const eraserDash = useTransform(progress, v => `${v * pathLen * 1.05} ${pathLen}`)
+  // Sample x/y directly from the SVG path — no CSS offset-path, no rotation
+  const carX = useTransform(progress, v => {
+    if (!trackRef.current) return size.w / 2 - CAR_W / 2
+    return trackRef.current.getPointAtLength(v * pathLenRef.current).x - CAR_W / 2
+  })
+  const carY = useTransform(progress, v => {
+    if (!trackRef.current) return size.h * 0.08 - CAR_H / 2
+    return trackRef.current.getPointAtLength(v * pathLenRef.current).y - CAR_H / 2
+  })
+  const carScale = useTransform(progress, [0, 0.25, 0.7, 1], [0.05, 0.12, 0.65, 1.0])
+  const eraserDash = useTransform(progress, v => {
+    const len = pathLenRef.current
+    return `${v * len * 1.06} ${len}`
+  })
 
   useEffect(() => {
     const onResize = () => setSize({ w: window.innerWidth, h: window.innerHeight })
@@ -54,10 +66,10 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Measure true path length once the SVG renders
+  // Measure true path length whenever the circuit changes
   useEffect(() => {
     if (trackRef.current) {
-      setPathLen(trackRef.current.getTotalLength())
+      pathLenRef.current = trackRef.current.getTotalLength()
     }
   }, [circuit])
 
@@ -71,10 +83,9 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
     const t = setTimeout(() => {
       animate(progress, 1, {
         duration: DRIVE_DURATION,
-        ease: [0.12, 0.0, 0.28, 1.0], // slow at back, accelerates, eases into arrival
+        ease: [0.25, 0.0, 0.1, 1.0], // accelerate hard, brake smoothly into position
         onComplete: () => {
           setIsSettled(true)
-          // Give the settled car's fade-in (0.35s) time to finish before showing letters
           setTimeout(() => {
             if (settledCarRef.current) {
               const rect = settledCarRef.current.getBoundingClientRect()
@@ -117,7 +128,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         <ThemeToggle />
       </div>
 
-      {/* Circuit SVG — track surface + dashed center line + eraser overlay */}
+      {/* Circuit SVG */}
       <svg
         className="absolute inset-0 pointer-events-none"
         width={size.w}
@@ -141,7 +152,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
           strokeLinecap="round"
           fill="none"
         />
-        {/* Eraser: same path, bg color, grows to cover the track behind the car */}
+        {/* Eraser: covers track behind the car with bg color */}
         <motion.path
           d={circuit}
           stroke="var(--bg-primary)"
@@ -152,16 +163,16 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         />
       </svg>
 
-      {/* F1 car following the circuit via CSS offset-path */}
+      {/* Driving car — positioned via getPointAtLength, always upright */}
       {!isSettled && (
         <motion.div
           className="absolute top-0 left-0 pointer-events-none"
           style={{
-            offsetPath: `path('${circuit}')`,
-            offsetDistance: offsetDist,
+            x: carX,
+            y: carY,
             scale: carScale,
-            width: 520,
-            height: 320,
+            width: CAR_W,
+            height: CAR_H,
             willChange: 'transform',
           }}
         >
@@ -211,7 +222,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         )}
       </AnimatePresence>
 
-      {/* Name letters — appear after car settles */}
+      {/* Name letters */}
       {isReady && !isExiting && <PhysicsName carBounds={carBounds} />}
 
       {/* Exit fade overlay */}
