@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import DashboardCard from '@/components/ui/DashboardCard'
+import CodeRainCard from '@/components/ui/CodeRainCard'
+import FloatingCar from '@/components/ui/FloatingCar'
 import { useStore } from '@/store/useStore'
 
 interface Project {
@@ -151,8 +152,9 @@ export default function PortfolioClient() {
   const filteredProjects = selectedCategory === 'all' ? projects : projects.filter((p) => p.category === selectedCategory)
 
   return (
-    <div className="pt-24 pb-12 min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-24 pb-12 min-h-screen bg-black text-white relative">
+      {!isMobile && <FloatingCar />}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
           <h1 className="text-5xl md:text-7xl font-racing tracking-wider text-white mb-6">PORTFOLIO</h1>
@@ -224,7 +226,7 @@ export default function PortfolioClient() {
                   window.open(url, '_blank', 'noopener,noreferrer')
                 }}
               >
-                <DashboardCard
+                <CodeRainCard
                   className="h-full interactive-element cursor-pointer relative"
                 >
                   <motion.h3
@@ -290,7 +292,7 @@ export default function PortfolioClient() {
                       </motion.span>
                     )}
                   </motion.div>
-                </DashboardCard>
+                </CodeRainCard>
               </motion.button>
             ))}
           </AnimatePresence>
