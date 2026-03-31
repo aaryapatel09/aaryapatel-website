@@ -24,8 +24,8 @@ interface DustCanvasProps {
   fading: boolean
 }
 
-const MAX_PARTICLES = 700
-const SPAWN_PER_SAMPLE = 3
+const MAX_PARTICLES = 1800
+const SPAWN_PER_SAMPLE = 6
 
 export default function DustCanvas({
   progress,
@@ -71,7 +71,7 @@ export default function DustCanvas({
 
     const now = performance.now() / 1000
     const time = now - startTime.current
-    const dt = 1 / 60 // fixed step for consistency
+    const dt = 1 / 60
 
     const p = progress.get()
 
@@ -91,7 +91,7 @@ export default function DustCanvas({
     // ---- Spawn particles during driving ----
     if (phase.current === 'spawning' && letterTargets.length > 0) {
       const delta = p - lastProgress.current
-      if (delta > 0.002 && particles.current.length < MAX_PARTICLES) {
+      if (delta > 0.001 && particles.current.length < MAX_PARTICLES) {
         const el = trackRef.current
         if (el && pathLength > 0) {
           // Spawn at the trailing erase edge (slightly behind car)
@@ -113,43 +113,41 @@ export default function DustCanvas({
 
     // ---- Fade out ----
     if (phase.current === 'fading') {
-      fadeOpacity.current = Math.max(0, fadeOpacity.current - dt * 2.5) // fade over ~0.4s
-      if (fadeOpacity.current <= 0) {
-        // Stop loop — component will unmount soon
-        return
-      }
+      fadeOpacity.current = Math.max(0, fadeOpacity.current - dt * 2.5)
+      if (fadeOpacity.current <= 0) return
     }
 
     // ---- Draw ----
     ctx.clearRect(0, 0, width, height)
-    ctx.globalAlpha = fadeOpacity.current
-
-    const baseR = isDark ? 255 : 20
-    const baseG = isDark ? 240 : 20
-    const baseB = isDark ? 200 : 40
 
     for (let i = 0; i < particles.current.length; i++) {
       const part = particles.current[i]
       if (!part.alive) continue
 
       // Sparkle: brief bright flash
-      const sparkle = Math.sin(time * 8 + part.sparklePhase) > 0.88
+      const sparkle = Math.sin(time * 10 + part.sparklePhase) > 0.85
+
+      // Golden color palette — warm amber/gold tones
+      const r = isDark ? (sparkle ? 255 : 220 + Math.sin(part.sparklePhase) * 30) : 30
+      const g = isDark ? (sparkle ? 215 : 170 + Math.sin(part.sparklePhase * 1.3) * 25) : 25
+      const b = isDark ? (sparkle ? 80 : 40 + Math.sin(part.sparklePhase * 0.7) * 20) : 10
+
       const opacity = sparkle
-        ? Math.min(1, part.baseOpacity + 0.5)
+        ? Math.min(1, part.baseOpacity + 0.4)
         : part.baseOpacity
-      const size = sparkle ? part.size * 1.8 : part.size
+      const size = sparkle ? part.size * 1.3 : part.size
 
       ctx.globalAlpha = fadeOpacity.current * opacity
-      ctx.fillStyle = `rgb(${baseR}, ${baseG}, ${baseB})`
+      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
       ctx.beginPath()
       ctx.arc(part.x, part.y, size, 0, Math.PI * 2)
       ctx.fill()
 
-      // Glow halo on sparkle frames
+      // Subtle warm glow (not a big halo — just a soft edge)
       if (sparkle) {
-        ctx.globalAlpha = fadeOpacity.current * opacity * 0.3
+        ctx.globalAlpha = fadeOpacity.current * opacity * 0.15
         ctx.beginPath()
-        ctx.arc(part.x, part.y, size * 3, 0, Math.PI * 2)
+        ctx.arc(part.x, part.y, size * 2, 0, Math.PI * 2)
         ctx.fill()
       }
     }
