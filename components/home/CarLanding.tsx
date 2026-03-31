@@ -1,302 +1,212 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, animate, useMotionValue, useTransform, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Image from 'next/image'
-import PhysicsName from '@/components/ui/PhysicsName'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useStore } from '@/store/useStore'
+
+const DRIVE_DURATION = 4.5
 
 interface CarLandingProps {
   onEnter: () => void
 }
 
+// Open path: starts upper-center (far/small), sweeps clockwise right then down, arrives center (close/large)
+function buildCircuit(w: number, h: number): string {
+  const cx = w / 2
+  return [
+    `M ${cx} ${h * 0.11}`,
+    `C ${w * 0.77} ${h * 0.07} ${w * 0.93} ${h * 0.21} ${w * 0.91} ${h * 0.39}`,
+    `C ${w * 0.89} ${h * 0.57} ${w * 0.76} ${h * 0.70} ${w * 0.62} ${h * 0.76}`,
+    `C ${w * 0.55} ${h * 0.80} ${w * 0.52} ${h * 0.82} ${cx} ${h * 0.50}`,
+  ].join(' ')
+}
+
 export default function CarLanding({ onEnter }: CarLandingProps) {
-  const [isReady, setIsReady] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
-  const [isHovering, setIsHovering] = useState(false)
   const [isSettled, setIsSettled] = useState(false)
-  const [windowSize, setWindowSize] = useState({ width: 1920, height: 1080 })
-  const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
-  const carRef = useRef<HTMLDivElement>(null)
-  const theme = useStore((state) => state.theme)
+  const [isHovering, setIsHovering] = useState(false)
+  const [size, setSize] = useState({ w: 1440, h: 900 })
+  const trackRef = useRef<SVGPathElement>(null)
+  const [pathLen, setPathLen] = useState(1400)
+  const progress = useMotionValue(0)
+  const theme = useStore(s => s.theme)
   const isDark = theme === 'dark'
   const shouldReduceMotion = useReducedMotion()
 
+  const circuit = buildCircuit(size.w, size.h)
+
+  // All motion derived from a single progress value (0 → 1)
+  const offsetDist = useTransform(progress, v => `${v * 100}%`)
+  const carScale = useTransform(progress, [0, 0.3, 0.75, 1], [0.06, 0.15, 0.72, 1.0])
+  // Eraser draws from path start to current car position, covering the track behind it
+  const eraserDash = useTransform(progress, v => `${v * pathLen * 1.05} ${pathLen}`)
+
   useEffect(() => {
-    // Set window size and car bounds
-    if (typeof window !== 'undefined') {
-      setWindowSize({ width: window.innerWidth, height: window.innerHeight })
-      
-      const updateCarBounds = () => {
-        if (carRef.current) {
-          const rect = carRef.current.getBoundingClientRect()
-          setCarBounds({
-            x: rect.left,
-            y: rect.top,
-            width: rect.width,
-            height: rect.height,
-          })
-        }
-      }
-      
-      const handleResize = () => {
-        setWindowSize({ width: window.innerWidth, height: window.innerHeight })
-        setTimeout(updateCarBounds, 100)
-      }
-      
-      // Initial car bounds after animation settles
-      setTimeout(() => {
-        updateCarBounds()
-        setIsReady(true)
-      }, 4000) // After driving animation completes (increased for smoother animation)
-      
-      window.addEventListener('resize', handleResize)
-      return () => {
-        window.removeEventListener('resize', handleResize)
-      }
-    }
-  }, [])
-  
-  // Mark as settled after driving animation
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsSettled(true)
-    }, 3500) // After 3.5 seconds, car has settled (matches animation duration)
-    
-    return () => clearTimeout(timer)
+    const onResize = () => setSize({ w: window.innerWidth, h: window.innerHeight })
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Measure true path length once the SVG renders
+  useEffect(() => {
+    if (trackRef.current) {
+      setPathLen(trackRef.current.getTotalLength())
+    }
+  }, [circuit])
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      progress.set(1)
+      setIsSettled(true)
+      return
+    }
+    const t = setTimeout(() => {
+      animate(progress, 1, {
+        duration: DRIVE_DURATION,
+        ease: [0.12, 0.0, 0.28, 1.0], // slow at back, accelerates, eases into arrival
+        onComplete: () => setIsSettled(true),
+      })
+    }, 400)
+    return () => clearTimeout(t)
+  }, [shouldReduceMotion, progress])
+
   const handleClick = () => {
+    if (!isSettled) return
     setIsExiting(true)
-    // Smooth transition: zoom out and fade
-    setTimeout(() => {
-      onEnter()
-    }, 800) // Longer transition for smoother effect
+    setTimeout(onEnter, 800)
   }
+
+  const trackColor = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.18)'
+  const dashColor  = isDark ? 'rgba(255,255,255,0.40)' : 'rgba(0,0,0,0.40)'
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isExiting ? 0 : 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.8, ease: 'easeInOut' }}
-      className="relative w-full h-screen flex items-center justify-center overflow-hidden cursor-none"
+      className="relative w-full h-screen overflow-hidden cursor-none"
       style={{ backgroundColor: 'var(--bg-primary)' }}
+      animate={{ opacity: isExiting ? 0 : 1 }}
+      transition={{ duration: 0.8 }}
       onClick={handleClick}
       role="button"
       tabIndex={0}
       aria-label="Enter the site"
       onKeyDown={(e) => {
-        // Only activate when the wrapper itself has focus (avoid triggering when inner controls are focused).
-        if (e.target !== e.currentTarget) return
-
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          handleClick()
-        }
+        if (!isSettled || e.target !== e.currentTarget) return
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick() }
       }}
     >
-      {/* Theme Toggle - Top Right */}
-      <div className="absolute top-6 right-6 z-30" onClick={(e) => e.stopPropagation()}>
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6 z-30" onClick={e => e.stopPropagation()}>
         <ThemeToggle />
       </div>
-      {/* Animated background particles (disabled for reduced motion) */}
-      {!shouldReduceMotion && (
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className={`absolute w-1 h-1 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`}
-              initial={{
-                x: Math.random() * windowSize.width,
-                y: Math.random() * windowSize.height,
-                opacity: 0.3,
-              }}
-              animate={{
-                y: [null, Math.random() * windowSize.height],
-                opacity: [0.3, 0.8, 0.3],
-              }}
-              transition={{
-                duration: Math.random() * 3 + 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-            />
-          ))}
-        </div>
-      )}
 
-      {/* Physics Name Letters */}
-      {isReady && !isExiting && <PhysicsName carBounds={carBounds} />}
-
-      {/* Main F1 Car */}
-      <motion.div
-        ref={carRef}
-        className="relative z-10"
-        initial={{
-          x: -windowSize.width * 0.5, // Start off-screen left
-          y: windowSize.height * 0.3,
-          rotate: -45, // Angled for driving effect
-        }}
-        animate={{
-          // Driving path animation
-          x: isSettled 
-            ? 0 // Center position
-            : [
-                -windowSize.width * 0.5, // Start: off-screen left
-                windowSize.width * 0.3,  // Drive to right
-                windowSize.width * 0.4,  // Continue right
-                windowSize.width * 0.2,  // Turn back left
-                -windowSize.width * 0.1, // Drive left
-                0,                        // Settle in center
-              ],
-          y: isSettled
-            ? 0 // Center position
-            : [
-                windowSize.height * 0.3, // Start: upper area
-                windowSize.height * 0.2,  // Move up
-                windowSize.height * 0.4,  // Move down
-                windowSize.height * 0.25, // Move up
-                0,                         // Move to center
-                0,                         // Stay in center
-              ],
-          rotate: isSettled
-            ? 0 // Straight
-            : [
-                -45,  // Start angled
-                -30,  // Turn
-                15,   // Turn more
-                -15,  // Turn back
-                5,    // Almost straight
-                0,    // Straight (settled)
-              ],
-          scale: isExiting 
-            ? 0.3 
-            : isHovering && isSettled 
-              ? 1.05 
-              : isSettled 
-                ? 1 
-                : [
-                    0.3,  // Start very small
-                    0.4,  // Grow slightly
-                    0.6,  // Continue growing
-                    0.8,  // Almost full size
-                    0.95, // Nearly there
-                    1,    // Full size when settled
-                  ],
-          opacity: isExiting ? 0 : 1,
-        }}
-        transition={{
-          x: {
-            duration: isSettled ? 0 : 3.5,
-            ease: isSettled ? 'easeOut' : [0.25, 0.1, 0.25, 1], // Smoother cubic bezier
-            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
-          },
-          y: {
-            duration: isSettled ? 0 : 3.5,
-            ease: isSettled ? 'easeOut' : [0.25, 0.1, 0.25, 1], // Smoother cubic bezier
-            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
-          },
-          rotate: {
-            duration: isSettled ? 0 : 3.5,
-            ease: isSettled ? 'easeOut' : [0.25, 0.1, 0.25, 1], // Smoother cubic bezier
-            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
-          },
-          scale: {
-            duration: isExiting ? 0.8 : isSettled ? 0.3 : 3.5,
-            ease: isExiting ? 'easeIn' : [0.25, 0.1, 0.25, 1], // Smooth zoom in
-            times: isSettled ? undefined : [0, 0.2, 0.4, 0.6, 0.8, 1],
-          },
-          opacity: {
-            duration: isExiting ? 0.8 : 0.3,
-            ease: 'easeInOut',
-          },
-        }}
-        onHoverStart={() => !isExiting && isSettled && setIsHovering(true)}
-        onHoverEnd={() => setIsHovering(false)}
+      {/* Circuit SVG — track surface + dashed center line + eraser overlay */}
+      <svg
+        className="absolute inset-0 pointer-events-none"
+        width={size.w}
+        height={size.h}
       >
+        {/* Track surface */}
+        <path
+          ref={trackRef}
+          d={circuit}
+          stroke={trackColor}
+          strokeWidth="28"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Dashed center line */}
+        <path
+          d={circuit}
+          stroke={dashColor}
+          strokeWidth="2"
+          strokeDasharray="16 12"
+          strokeLinecap="round"
+          fill="none"
+        />
+        {/* Eraser: same path, bg color, grows to cover the track behind the car */}
+        <motion.path
+          d={circuit}
+          stroke="var(--bg-primary)"
+          strokeWidth="34"
+          strokeLinecap="round"
+          fill="none"
+          style={{ strokeDasharray: eraserDash }}
+        />
+      </svg>
+
+      {/* F1 car following the circuit via CSS offset-path */}
+      {!isSettled && (
         <motion.div
-          className="relative w-[600px] h-[400px] md:w-[800px] md:h-[500px]"
-          animate={{
-            filter: isExiting ? 'blur(20px)' : 'blur(0px)',
+          className="absolute top-0 left-0 pointer-events-none"
+          style={{
+            offsetPath: `path('${circuit}')`,
+            offsetDistance: offsetDist,
+            offsetRotate: 'auto',
+            scale: carScale,
+            width: 520,
+            height: 320,
+            willChange: 'transform',
           }}
-          transition={{ duration: 0.8, ease: 'easeIn' }}
-          style={{ backgroundColor: 'transparent' }}
         >
           <Image
             src="/images/f1-car.png"
-            alt="Formula One Car"
+            alt=""
             fill
             className="object-contain"
             priority
-            style={{ 
-              mixBlendMode: 'normal',
-              backgroundColor: 'transparent'
-            }}
           />
-
-          {/* Click hint - only show after car has settled */}
-          <AnimatePresence>
-            {isSettled && isReady && !isExiting && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-center"
-              >
-                {shouldReduceMotion ? (
-                  <>
-                    <p className={`${isDark ? 'text-white' : 'text-black'} text-xl md:text-2xl font-mono tracking-wider`}>
-                      CLICK TO ENTER
-                    </p>
-                    <div className={`${isDark ? 'text-white' : 'text-black'} text-4xl mt-2`}>↓</div>
-                  </>
-                ) : (
-                  <>
-                    <motion.p
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className={`${isDark ? 'text-white' : 'text-black'} text-xl md:text-2xl font-mono tracking-wider`}
-                    >
-                      CLICK TO ENTER
-                    </motion.p>
-                    <motion.div
-                      animate={{ y: [0, 10, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className={`${isDark ? 'text-white' : 'text-black'} text-4xl mt-2`}
-                    >
-                      ↓
-                    </motion.div>
-                  </>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.div>
-      </motion.div>
-
-      {/* Glow effect on hover */}
-      {isHovering && !isExiting && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.3, scale: 1.2 }}
-          exit={{ opacity: 0 }}
-          className={`absolute inset-0 blur-3xl pointer-events-none ${isDark ? 'bg-white' : 'bg-black'}`}
-        />
       )}
-      
-      {/* Zoom out overlay effect */}
+
+      {/* Settled: large centered car + click prompt */}
+      <AnimatePresence>
+        {isSettled && !isExiting && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: isHovering ? 1.03 : 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            className="absolute inset-0 flex flex-col items-center justify-center z-10"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            <div className="relative w-[580px] h-[370px] md:w-[740px] md:h-[460px]">
+              <Image
+                src="/images/f1-car.png"
+                alt="Formula One Car"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: [0.5, 1, 0.5], y: 0 }}
+              transition={{
+                opacity: { duration: 1.5, repeat: Infinity, delay: 0.25 },
+                y: { duration: 0.35, delay: 0.15 },
+              }}
+              className={`mt-5 text-lg md:text-xl font-mono tracking-[0.35em] ${isDark ? 'text-white' : 'text-black'}`}
+            >
+              CLICK TO ENTER
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Exit fade overlay */}
       {isExiting && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="absolute inset-0 bg-black pointer-events-none z-20"
+          className="absolute inset-0 z-20 pointer-events-none"
+          style={{ backgroundColor: 'var(--bg-primary)' }}
         />
       )}
     </motion.div>
   )
 }
-
