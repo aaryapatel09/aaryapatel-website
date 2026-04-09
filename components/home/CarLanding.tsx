@@ -35,6 +35,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   const [isSettled, setIsSettled] = useState(false)
   const [shadowFormed, setShadowFormed] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
+  const [isTouchPrimary, setIsTouchPrimary] = useState(false)
   const [size, setSize] = useState({ w: 1440, h: 900 })
   const [carBounds, setCarBounds] = useState<{ x: number; y: number; width: number; height: number } | undefined>()
   const trackRef = useRef<SVGPathElement>(null)
@@ -99,7 +100,10 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
   })
 
   useEffect(() => {
-    const onResize = () => setSize({ w: window.innerWidth, h: window.innerHeight })
+    const onResize = () => {
+      setSize({ w: window.innerWidth, h: window.innerHeight })
+      setIsTouchPrimary(window.matchMedia('(hover: none) and (pointer: coarse)').matches)
+    }
     onResize()
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
@@ -148,7 +152,7 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
 
   return (
     <motion.div
-      className="relative w-full h-screen overflow-hidden cursor-none"
+      className={`relative w-full h-screen overflow-hidden ${isTouchPrimary ? '' : 'cursor-none'}`}
       style={{ backgroundColor: 'var(--bg-primary)' }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.8 }}

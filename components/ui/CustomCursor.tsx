@@ -18,11 +18,13 @@ export default function CustomCursor() {
   const cursorYSpring = useSpring(cursorY, springConfig)
 
   useEffect(() => {
-    // Check if device is mobile/touch device
+    // Check if device is actually touch-primary (not just touch-capable).
+    // Windows 11 laptops often have touchscreens but are used with a mouse —
+    // those report maxTouchPoints > 0 but still have hover: hover and pointer: fine.
     const checkMobile = () => {
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const isTouchPrimary = window.matchMedia('(hover: none) and (pointer: coarse)').matches
       const isSmallScreen = window.innerWidth < 768
-      setIsMobile(isTouchDevice || isSmallScreen)
+      setIsMobile(isTouchPrimary || isSmallScreen)
     }
 
     checkMobile()
