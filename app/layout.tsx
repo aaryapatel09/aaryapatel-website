@@ -166,6 +166,12 @@ const personJsonLd = {
     'https://github.com/aaryapatel09',
     'https://x.com/AaryaPatel63558',
   ],
+  subjectOf: [
+    { '@type': 'WebPage', name: 'About Aarya Patel', url: `${siteUrl}/about` },
+    { '@type': 'CollectionPage', name: "Aarya Patel's Awards", url: `${siteUrl}/awards` },
+    { '@type': 'CollectionPage', name: "Aarya Patel's Portfolio", url: `${siteUrl}/portfolio` },
+    { '@type': 'Blog', name: "Aarya Patel's Poetry", url: `${siteUrl}/blog` },
+  ],
 }
 
 const websiteJsonLd = {

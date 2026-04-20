@@ -102,6 +102,51 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const post = await getPost(params.slug)
   if (!post) notFound()
 
-  return <BlogPostClient post={post} />
+  const canonical = `${siteUrl}/blog/${params.slug}`
+  const bodyText = typeof post.body === 'string' ? post.body : ''
+  const snippet = bodyText.split('\n\n')[0]?.replace(/\s+/g, ' ').slice(0, 300) ?? ''
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+      { '@type': 'ListItem', position: 2, name: 'Poetry', item: `${siteUrl}/blog` },
+      { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
+    ],
+  }
+
+  const poemJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Poem',
+    '@id': canonical,
+    name: post.title,
+    headline: post.title,
+    description: snippet || `Poem by Aarya Patel.`,
+    url: canonical,
+    inLanguage: 'en-US',
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: { '@type': 'Person', name: 'Aarya Patel', url: siteUrl },
+    creator: { '@type': 'Person', name: 'Aarya Patel', url: siteUrl },
+    publisher: { '@type': 'Person', name: 'Aarya Patel', url: siteUrl },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    genre: 'Poetry',
+    keywords: (post.categories ?? []).join(', ') || 'poetry, Aarya Patel',
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(poemJsonLd) }}
+      />
+      <BlogPostClient post={post} />
+    </>
+  )
 }
 
