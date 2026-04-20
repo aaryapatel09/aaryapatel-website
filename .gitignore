@@ -37,3 +37,6 @@ next-env.d.ts
 sanity/.sanity
 sanity/node_modules
 
+# claude code local tooling
+.claude/
+

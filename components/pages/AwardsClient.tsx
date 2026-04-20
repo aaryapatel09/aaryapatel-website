@@ -32,6 +32,15 @@ export default function AwardsClient() {
       category: 'other',
     },
     {
+      id: 'fbla-states-1st-place',
+      title: '1st Place – FBLA California State, Computer Problem Solving',
+      issuer: 'Issued by Future Business Leaders of America',
+      date: 'Apr 2026',
+      description:
+        'Associated with Homestead High School. Ranked 1st among competitors at the 2026 FBLA California State Leadership Conference in the Computer Problem Solving event, an objective test on operating systems, networking, hardware, and security. Qualified to represent California at the FBLA National Leadership Conference.',
+      category: 'programming',
+    },
+    {
       id: 'fbla-1st-place',
       title: '1st Place – FBLA Bay Section, Computer Problem Solving',
       issuer: 'Issued by Future Business Leaders of America',

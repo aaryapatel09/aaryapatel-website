@@ -29,15 +29,17 @@ export default async function sitemap() {
   const now = new Date()
 
   return [
-    { url: `${siteUrl}/`, lastModified: now },
-    { url: `${siteUrl}/about`, lastModified: now },
-    { url: `${siteUrl}/portfolio`, lastModified: now },
-    { url: `${siteUrl}/awards`, lastModified: now },
-    { url: `${siteUrl}/gallery`, lastModified: now },
-    { url: `${siteUrl}/blog`, lastModified: now },
+    { url: `${siteUrl}/`, lastModified: now, changeFrequency: 'weekly' as const, priority: 1.0 },
+    { url: `${siteUrl}/about`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: `${siteUrl}/awards`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: `${siteUrl}/portfolio`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.8 },
+    { url: `${siteUrl}/blog`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.8 },
+    { url: `${siteUrl}/gallery`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.6 },
     ...blogSlugs.map((slug) => ({
       url: `${siteUrl}/blog/${slug}`,
       lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
     })),
   ]
 }
