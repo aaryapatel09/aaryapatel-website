@@ -76,14 +76,6 @@ export default function MainHub() {
       color: 'from-white to-gray-300',
       description: 'Who I Am',
     },
-    {
-      id: 'resume',
-      title: 'Resume',
-      path: '/resume',
-      emoji: '📄',
-      color: 'from-white to-gray-300',
-      description: 'View / Download',
-    },
   ]
 
   return (
@@ -93,8 +85,30 @@ export default function MainHub() {
           className="min-h-screen pt-24 pb-12 relative overflow-hidden"
           style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
         >
-          {/* Theme Toggle - Top Right */}
-          <div className="absolute top-6 right-6 z-30">
+          {/* Top Right - Resume quick link + Theme Toggle */}
+          <div className="absolute top-6 right-6 z-30 flex items-center gap-3">
+            <Link
+              href="/resume"
+              onClick={() => setCurrentSection('resume')}
+              className="interactive-element inline-flex items-center gap-1.5 px-3 py-1.5 font-racing tracking-wider text-xs rounded-full border"
+              style={{
+                color: 'var(--text-primary)',
+                borderColor: 'var(--border-color)',
+                backgroundColor: 'var(--bg-secondary)',
+              }}
+              aria-label="View or download resume"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-3.5 h-3.5"
+                aria-hidden="true"
+              >
+                <path d="M4 4a2 2 0 012-2h5.586A2 2 0 0113 2.586L15.414 5A2 2 0 0116 6.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+              </svg>
+              RESUME
+            </Link>
             <ThemeToggle />
           </div>
       {/* Animated background elements */}
@@ -157,7 +171,7 @@ export default function MainHub() {
         </motion.div>
 
          {/* Icon Grid */}
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 max-w-[1600px] mx-auto">
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-10 max-w-[1600px] mx-auto">
           {icons.map((icon, index) => (
             <motion.div
               key={icon.id}
