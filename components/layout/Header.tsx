@@ -14,6 +14,7 @@ const navItems = [
   { name: 'Poetry', path: '/blog', id: 'blog' },
   { name: 'Gallery', path: '/gallery', id: 'gallery' },
   { name: 'Awards', path: '/awards', id: 'awards' },
+  { name: 'Resume', path: '/resume', id: 'resume' },
 ]
 
 export default function Header() {

@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   if (!post) {
     return {
-      title: 'Poetry | Aarya Patel',
+      title: 'Poetry',
       description: 'Poetry exploring the intersection of humanity and technology.',
       alternates: {
         canonical,
@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     post.mainImage ? toAbsoluteUrl(String(post.mainImage)) : defaultOgImage
 
   return {
-    title: `${post.title} | Poetry | Aarya Patel`,
+    title: `${post.title} — Poetry`,
     description,
     alternates: {
       canonical,

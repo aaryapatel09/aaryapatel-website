@@ -45,6 +45,11 @@ This file provides a concise, factual summary of Aarya Patel's profile for large
 - Data Analytics Intern (2025–present): built an analytics platform integrating YouTube and Twitter via APIs, with Streamlit/Plotly dashboards and Gemini-powered natural language querying.
 - Researcher, The New York Academy of Sciences (Sep–Dec 2024): led a team of 4 building an AI-driven healthcare tool to reduce diagnostic bias; presented at the NYAS Innovation Challenge.
 
+## Resume
+
+- View or download: https://www.aaryapatel.site/resume
+- Direct PDF: https://www.aaryapatel.site/aarya-patel-resume.pdf
+
 ## Verified profiles (sameAs)
 
 - LinkedIn: https://www.linkedin.com/in/aaryapatel1/

@@ -76,6 +76,14 @@ export default function MainHub() {
       color: 'from-white to-gray-300',
       description: 'Who I Am',
     },
+    {
+      id: 'resume',
+      title: 'Resume',
+      path: '/resume',
+      emoji: '📄',
+      color: 'from-white to-gray-300',
+      description: 'View / Download',
+    },
   ]
 
   return (
@@ -149,7 +157,7 @@ export default function MainHub() {
         </motion.div>
 
          {/* Icon Grid */}
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-10 max-w-[1600px] mx-auto">
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 max-w-[1600px] mx-auto">
           {icons.map((icon, index) => (
             <motion.div
               key={icon.id}

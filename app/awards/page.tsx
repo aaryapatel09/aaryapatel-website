@@ -5,7 +5,7 @@ import { awards } from '@/lib/awards'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
-  title: 'Awards | Aarya Patel',
+  title: 'Awards',
   description:
     "Aarya Patel's awards: USACO Platinum, U.S. Physics Olympiad (USAPhO) qualifier, FBLA California State 1st place in Computer Problem Solving, Scholastic Art & Writing Silver Key, NFSPS Manningham Honorable Mention, and more.",
   alternates: {

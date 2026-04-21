@@ -5,7 +5,7 @@ import { projects } from '@/lib/projects'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
-  title: 'Portfolio | Aarya Patel',
+  title: 'Portfolio',
   description:
     "Aarya Patel's projects in software engineering, machine learning, AI, and Formula 1 systems design, including the F1 Predictor, an ASL translator, DrunkTester2.0, and AI healthcare research at NYAS.",
   alternates: {

@@ -4,7 +4,7 @@ import AboutClient from '@/components/pages/AboutClient'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
-  title: 'About | Aarya Patel',
+  title: 'About',
   description:
     'About Aarya Patel: high school student at Homestead High School (Cupertino, CA), USACO Platinum programmer, USAPhO qualifier, FBLA California State 1st place in Computer Problem Solving, Scholastic Art & Writing Silver Key poet, co-founder of Code4Cause.',
   alternates: {

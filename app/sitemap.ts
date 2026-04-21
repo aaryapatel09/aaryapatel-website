@@ -31,6 +31,7 @@ export default async function sitemap() {
   return [
     { url: `${siteUrl}/`, lastModified: now, changeFrequency: 'weekly' as const, priority: 1.0 },
     { url: `${siteUrl}/about`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: `${siteUrl}/resume`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.9 },
     { url: `${siteUrl}/awards`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.9 },
     { url: `${siteUrl}/portfolio`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.8 },
     { url: `${siteUrl}/blog`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.8 },

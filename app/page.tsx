@@ -4,7 +4,7 @@ import HomeClient from '@/components/pages/HomeClient'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
-  title: 'Home | Aarya Patel',
+  title: { absolute: 'Aarya Patel — Student, Programmer, Poet' },
   description: 'Interactive portfolio showcasing Formula 1 engineering, software development, and powertrain design.',
   alternates: {
     canonical: `${siteUrl}/`,

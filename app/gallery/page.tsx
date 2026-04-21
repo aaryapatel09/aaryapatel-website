@@ -4,7 +4,7 @@ import GalleryClient from '@/components/pages/GalleryClient'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export const metadata: Metadata = {
-  title: 'Gallery | Aarya Patel',
+  title: 'Gallery',
   description: 'Photos from travels, adventures, and life experiences.',
   alternates: {
     canonical: `${siteUrl}/gallery`,
