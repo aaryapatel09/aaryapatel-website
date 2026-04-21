@@ -5,7 +5,6 @@ import { motion, animate, useMotionValue, useTransform, AnimatePresence, useRedu
 import Image from 'next/image'
 import PhysicsName from '@/components/ui/PhysicsName'
 import DustCanvas from '@/components/ui/DustCanvas'
-import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useStore } from '@/store/useStore'
 import { computePretextLayout, measureCharacters } from '@/lib/pretext'
 import type { LetterTarget } from '@/lib/dustParticle'
@@ -165,11 +164,6 @@ export default function CarLanding({ onEnter }: CarLandingProps) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick() }
       }}
     >
-      {/* Theme Toggle */}
-      <div className="absolute top-6 right-6 z-30" onClick={e => e.stopPropagation()}>
-        <ThemeToggle />
-      </div>
-
       {/* Circuit SVG — hide entirely once car is settled */}
       <svg
         className="absolute inset-0 pointer-events-none transition-opacity duration-500"

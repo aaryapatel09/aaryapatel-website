@@ -6,7 +6,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { useStore } from '@/store/useStore'
-import ThemeToggle from '@/components/ui/ThemeToggle'
 
 const F1LapAttack = dynamic(() => import('@/components/game/F1LapAttack'), { ssr: false })
 
@@ -85,32 +84,7 @@ export default function MainHub() {
           className="min-h-screen pt-24 pb-12 relative overflow-hidden"
           style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
         >
-          {/* Top Right - Resume quick link + Theme Toggle */}
-          <div className="absolute top-6 right-6 z-30 flex items-center gap-3">
-            <Link
-              href="/resume"
-              onClick={() => setCurrentSection('resume')}
-              className="interactive-element inline-flex items-center gap-1.5 px-3 py-1.5 font-racing tracking-wider text-xs rounded-full border"
-              style={{
-                color: 'var(--text-primary)',
-                borderColor: 'var(--border-color)',
-                backgroundColor: 'var(--bg-secondary)',
-              }}
-              aria-label="View or download resume"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="w-3.5 h-3.5"
-                aria-hidden="true"
-              >
-                <path d="M4 4a2 2 0 012-2h5.586A2 2 0 0113 2.586L15.414 5A2 2 0 0116 6.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
-              </svg>
-              RESUME
-            </Link>
-            <ThemeToggle />
-          </div>
+          {/* Resume pill + Theme Toggle are rendered globally from the root layout */}
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating particles */}

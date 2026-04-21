@@ -4,6 +4,7 @@ import CustomCursor from '@/components/ui/CustomCursor'
 import ConsoleGreeting from '@/components/ui/ConsoleGreeting'
 import EasterEggs from '@/components/ui/EasterEggs'
 import SocialLinks from '@/components/layout/SocialLinks'
+import GlobalNav from '@/components/layout/GlobalNav'
 import ThemeProvider from '@/components/ui/ThemeProvider'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
@@ -212,6 +213,7 @@ export default function RootLayout({
         <ConsoleGreeting />
         <EasterEggs />
         <SocialLinks />
+        <GlobalNav />
         <main className="min-h-screen">
           {children}
         </main>
