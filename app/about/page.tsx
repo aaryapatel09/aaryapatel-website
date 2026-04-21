@@ -68,15 +68,23 @@ const faqJsonLd = {
       name: 'Who is Aarya Patel?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Aarya Patel is a high school student at Homestead High School in Cupertino, California. He is a USACO Platinum competitive programmer, U.S. Physics Olympiad (USAPhO) qualifier, FBLA California State 1st place winner in Computer Problem Solving, and a nationally recognized poet (Scholastic Art & Writing Silver Key, NFSPS Manningham Honorable Mention). He builds software, machine learning, and Formula 1 engineering projects.',
+        text: 'Aarya Patel graduated high school early from Homestead High School in Sunnyvale, California. He is Co-Founder & CEO of Vytus (vytus.health), a multimodal ML health platform built in Rust. He is a USACO Platinum competitive programmer, U.S. Physics Olympiad (USAPHO) qualifier, 1st place winner at the FBLA California State Leadership Conference in Computer Problem Solving, and a Scholastic Art & Writing Awards Silver Key poet. He co-founded Code4Cause and serves as FBLA Finance & Investments State President.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What school does Aarya Patel attend?',
+      name: 'Where did Aarya Patel go to high school?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Aarya Patel attends Homestead High School in Cupertino, California.',
+        text: 'Aarya Patel attended Homestead High School in Sunnyvale, California (graduated early). His relevant coursework included Advanced Mathematics, Computer Science, Physics, and Engineering Design.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is Vytus?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Vytus is the company Aarya Patel co-founded and runs as CEO. It is a multimodal ML health platform built in Rust, using user-specific LoRA adapters across daily, weekly, and monthly horizons to produce individual-level risk predictions from wearables, labs, vitals, nutrition, and behavioral signals. It also includes a counterfactual prediction engine for causal outcome estimates under hypothetical input perturbations. Vytus scaled to a 300+ person waitlist and is incorporated as a Delaware C-Corp with HIPAA-compliant Postgres and Redis infrastructure. Learn more at vytus.health.',
       },
     },
     {
@@ -108,7 +116,7 @@ const faqJsonLd = {
       name: 'What projects has Aarya Patel built?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Aarya Patel has built an F1 race-winner predictor using machine learning on 70+ years of data, a real-time American Sign Language translator using CNNs and TensorFlow, DrunkTester2.0 for sobriety assessment via computer vision and speech analysis, a Smart Health Assistant, a YouTube/Twitter data analytics platform with Google Gemini integration, and an AI healthcare bias-mitigation tool built at the New York Academy of Sciences.',
+        text: 'Aarya Patel\'s current major project is Vytus (vytus.health), a multimodal ML health platform built in Rust with user-specific LoRA adapters and a causal counterfactual prediction engine. He also maintains two open-source libraries: sigint, a quant pipeline that extracts timestamped trading signals from SEC filings (10-K, 10-Q, 8-K) via LLMs — with engines for supply chain graphs, risk factor diffs, M&A detection, and tone tracking; and neurosim, a differentiable physics library covering classical mechanics, FDTD electromagnetics, quantum, and statistical mechanics, enabling inverse problem solving via autodiff. Earlier work includes an F1 race-winner predictor, a real-time ASL translator using CNNs, DrunkTester2.0 for sobriety assessment, and an AI healthcare bias-mitigation tool built at the New York Academy of Sciences.',
       },
     },
     {
@@ -116,7 +124,7 @@ const faqJsonLd = {
       name: 'What roles does Aarya Patel hold in FBLA?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Aarya Patel is the FBLA State President for Finance and Investments (FAI), leading a team of officers who support 6,000+ members across 126+ chapters in 30+ states and 4 countries. He has also won 1st place at both the 2026 Bay Section and 2026 California State FBLA conferences in the Computer Problem Solving event.',
+        text: 'Aarya Patel is the FBLA State President for Finance and Investments (FAI) — previously State Vice President — leading a team of officers who support 6,000+ members across 126+ chapters in 30+ states and 4 countries. Under his leadership the division has fundraised $50,000+ with partners including Chipotle and Intertwined, run a Stock Market Competition awarding scholarships to 50+ participants, and hosted guest lectures from industry leaders including a Wells Fargo VP. He also won 1st place at both the 2026 Bay Section and 2026 California State FBLA conferences in the Computer Problem Solving event.',
       },
     },
     {
@@ -124,7 +132,7 @@ const faqJsonLd = {
       name: 'What programming languages does Aarya Patel use?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Aarya Patel works primarily in Python, Java, C++, TypeScript, and JavaScript, with applied work in machine learning (TensorFlow, CNNs), data engineering (Streamlit, Plotly, REST APIs), and full-stack web development.',
+        text: 'Aarya Patel works in Python, Rust, Java, C++, TypeScript, JavaScript, and MATLAB. His applied areas include multimodal ML inference, LoRA fine-tuning, causal modeling, GPU systems, CNNs, LSTMs, and computer vision. His infrastructure stack includes AWS, GCP, Docker, Temporal, Postgres, Redis, HIPAA pipelines, Prometheus, and Grafana.',
       },
     },
     {

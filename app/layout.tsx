@@ -10,7 +10,7 @@ import ThemeProvider from '@/components/ui/ThemeProvider'
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 const siteDescription =
-  'Aarya Patel — student, builder, and poet. Official portfolio of Aarya Patel featuring Formula 1 engineering projects, software, USACO Platinum programming, FBLA awards, and published poetry.'
+  'Aarya Patel — builder, competitive programmer, and poet. Co-Founder & CEO of Vytus (multimodal ML for health). Official portfolio of Aarya Patel featuring USACO Platinum programming, USAPHO physics olympiad, FBLA California State 1st Place in Computer Problem Solving, Scholastic Art & Writing poetry, and open-source ML infrastructure projects (sigint, neurosim).'
 
 export const metadata: Metadata = {
   title: {
@@ -95,7 +95,7 @@ const personJsonLd = {
   mainEntityOfPage: siteUrl,
   image: `${siteUrl}/images/about-portrait.png`,
   description:
-    'Aarya Patel is a high school student at Homestead High School (Cupertino, California). He is a USACO Platinum competitive programmer, U.S. Physics Olympiad (USAPhO) qualifier, FBLA California State 1st place winner in Computer Problem Solving, and a nationally recognized poet (Scholastic Art & Writing Silver Key, NFSPS Manningham Honorable Mention). He builds software, machine learning, and F1 engineering projects, and co-founded Code4Cause.',
+    'Aarya Patel graduated high school early from Homestead High School (Sunnyvale, California). He is Co-Founder & CEO of Vytus (vytus.health), a multimodal ML health platform built in Rust with user-specific LoRA adapters, causal counterfactual inference, and HIPAA-compliant infrastructure. He is a USACO Platinum competitive programmer, U.S. Physics Olympiad (USAPHO) qualifier, 1st place winner at FBLA California State in Computer Problem Solving (and #1 Bay Sections), and a Scholastic Art & Writing Awards Silver Key poet. He co-founded Code4Cause, serves as FBLA Finance & Investments State President, and builds open-source ML infrastructure (sigint, neurosim).',
   jobTitle: 'Student, software engineer, and poet',
   nationality: 'American',
   gender: 'Male',
@@ -110,19 +110,35 @@ const personJsonLd = {
       addressCountry: 'US',
     },
   },
+  worksFor: {
+    '@type': 'Organization',
+    name: 'Vytus',
+    url: 'https://vytus.health',
+    description:
+      'Multimodal ML health platform. Delaware C-Corp with HIPAA-compliant infrastructure.',
+  },
   memberOf: [
     { '@type': 'Organization', name: 'Future Business Leaders of America (FBLA)' },
     { '@type': 'Organization', name: 'USA Computing Olympiad (USACO)' },
-    { '@type': 'Organization', name: 'Code4Cause', url: 'https://code4cause.org' },
+    { '@type': 'Organization', name: 'Code4Cause' },
   ],
   knowsAbout: [
-    'Formula 1 engineering',
-    'Powertrain design',
+    'Multimodal machine learning inference',
+    'LoRA fine-tuning',
+    'Causal machine learning',
+    'Counterfactual prediction',
+    'Decision theory',
+    'GPU systems',
+    'HIPAA-compliant infrastructure',
+    'Rust systems programming',
+    'Differentiable physics simulation',
+    'Quantitative trading signals',
+    'LLM information extraction',
     'Computer science',
     'Software engineering',
     'Machine learning',
     'Artificial intelligence',
-    'Data science',
+    'Data analytics',
     'Competitive programming',
     'USACO Platinum algorithms',
     'Dynamic programming',
@@ -134,20 +150,31 @@ const personJsonLd = {
     'Computer networking',
     'Poetry',
     'Creative writing',
+    'C-Corp incorporation and startup operations',
   ],
-  knowsLanguage: ['English', 'Python', 'Java', 'C++', 'JavaScript', 'TypeScript'],
+  knowsLanguage: ['English', 'Python', 'Rust', 'Java', 'C++', 'TypeScript', 'JavaScript', 'MATLAB'],
   hasOccupation: {
     '@type': 'Occupation',
-    name: 'Student and software engineer',
+    name: 'Co-Founder & CEO of Vytus; software and ML engineer',
     skills: [
       'Python',
-      'Java',
-      'C++',
+      'Rust',
       'TypeScript',
-      'Machine learning',
-      'CAD design',
+      'Multimodal ML inference',
+      'LoRA fine-tuning',
+      'Causal modeling',
+      'GPU systems',
+      'Postgres',
+      'Redis',
+      'Docker',
+      'Temporal',
+      'AWS',
+      'GCP',
+      'HIPAA pipelines',
       'Competitive programming',
       'Data analytics',
+      'Public speaking',
+      'C-Corp incorporation',
     ],
   },
   award: [

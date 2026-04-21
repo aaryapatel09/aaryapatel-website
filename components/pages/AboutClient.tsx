@@ -14,37 +14,43 @@ export default function AboutClient() {
   }, [setCurrentSection])
 
   const skills = [
-    { name: 'Machine Learning', level: 95 },
     { name: 'Python', level: 95 },
-    { name: 'AI & Data Science', level: 90 },
-    { name: 'Java & C++', level: 85 },
-    { name: 'CAD Design', level: 80 },
+    { name: 'Machine Learning', level: 92 },
+    { name: 'Rust', level: 85 },
+    { name: 'TypeScript / JavaScript', level: 85 },
+    { name: 'Cloud & Infra (AWS, GCP, Docker, Postgres)', level: 85 },
   ]
 
   const experiences = [
     {
-      title: 'Co-Founder & Chief Operations Officer',
-      period: 'May 2025 - Present',
+      title: 'Co-Founder & CEO — Vytus',
+      period: 'Feb 2026 – Present',
       description:
-        'Co-founded Code4Cause, a student-led organization teaching middle schoolers Python, data analysis, and machine learning. Led operations for the 4-week "Greensight" program, guiding students from zero coding experience to building ML models for environmental impact. Managed program logistics, curriculum planning, and helped students produce research shared with local city governments.',
+        'Building a multimodal ML inference system in Rust with user-specific LoRA adapters across daily/weekly/monthly horizons — producing individual-level risk predictions from wearables, labs, vitals, nutrition, and behavioral signals. Built a counterfactual prediction engine (/what-if) grounded in causal ML, a Temporal-orchestrated nightly personalization pipeline, and scaled to a 300+ person waitlist. Incorporated as a Delaware C-Corp with HIPAA-compliant Postgres/Redis infrastructure from day one.',
     },
     {
-      title: 'State President - Finance and Investments (FAI)',
-      period: 'Apr 2025 - Present',
+      title: 'State President — Finance & Investments (FAI), FBLA',
+      period: 'Oct 2024 – Present',
       description:
-        'Lead a team of officers to empower 6,000+ members across 126+ chapters in 30+ states and 4 countries through financial literacy and investment opportunities. Foster partnerships, enhance engagement, and provide resources to chapters worldwide. Contributed to $50,000+ fundraised with partners including Chipotle and Intertwined.',
+        'Lead 6,000+ members across 126+ chapters in 30+ states and 4 countries delivering financial literacy and investment education. Raised $50,000+ with partners including Chipotle and Intertwined, ran a Stock Market Competition awarding scholarships to 50+ participants, and organized 3+ guest lectures from industry leaders including a Wells Fargo VP. Previously served as State Vice President.',
     },
     {
-      title: 'Data Analytics Intern',
-      period: 'May 2025 - Present',
+      title: 'Co-Founder & Chief Operations Officer — Code4Cause',
+      period: 'May 2025 – Present',
       description:
-        'Independently developed an analytics platform integrating YouTube and Twitter data via APIs. Built data pipelines, created interactive dashboards using Streamlit and Plotly, and integrated Google Gemini AI for natural language querying. Designed automated social listening tools and competitor analysis frameworks.',
+        'Co-founded a student-led nonprofit; grew the program to serve 20+ middle schoolers across 4 weeks of structured ML curriculum. Designed GreenSight, guiding students from 0 coding experience through a full ML pipeline. Students shipped a model identifying 15+ Bay Area high-CO₂ locations and submitted it to Sunnyvale city government; in talks with Mercury News for a feature.',
     },
     {
-      title: 'Researcher - The New York Academy of Sciences',
-      period: 'Sep 2024 - Dec 2024',
+      title: 'Data Analytics Intern — Natalie Brunell (500K+ sub Fintech YouTuber)',
+      period: 'May 2025 – Present',
       description:
-        'Led a team of 4 in developing an AI-driven healthcare tool to address biases in medical diagnosis and treatment. Spearheaded design and implementation of core algorithms using Python, developed ethical AI filters, and created user interfaces for healthcare professionals. Presented findings to a panel of experts at the NYAS Innovation Challenge.',
+        'Independent contractor. Built an analytics platform integrating YouTube and Twitter (X) APIs, monitoring 10+ channel metrics and competitor benchmarks in real time. Shipped 5+ interactive Streamlit/Plotly dashboards and integrated Google Gemini AI for natural language querying — reducing manual reporting by ~60%.',
+    },
+    {
+      title: 'Founder — Automotive Restoration & Resale',
+      period: 'Jun – Aug 2025',
+      description:
+        'Bought, restored, and resold 10+ damaged vehicles and motorcycles — engine rebuilds, electrical troubleshooting, bodywork, and welding. Generated $10K revenue in 3 months.',
     },
   ]
 
@@ -61,7 +67,7 @@ export default function AboutClient() {
             ABOUT
           </h1>
           <p className="text-lg font-mono text-gray-300 max-w-3xl leading-relaxed">
-            High school dropout. Constantly building and learning—and open to any interesting opportunities.
+            Graduated high school early. Co-Founder &amp; CEO of Vytus. Constantly building and learning — and open to interesting opportunities.
           </p>
         </motion.section>
 

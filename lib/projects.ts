@@ -10,6 +10,36 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'sigint',
+    title: 'sigint',
+    category: 'software',
+    description:
+      'Quant pipeline extracting timestamped trading signals from SEC filings (10-K, 10-Q, 8-K) via LLMs — grounded in Cohen, Malloy & Nguyen (2020). Four engines: supply chain graph, risk factor diff, M&A detector, and tone tracker. Outputs to Parquet/DuckDB with FastAPI and webhook support.',
+    technologies: ['Python', 'Claude API', 'DuckDB', 'FastAPI', 'Parquet', 'LLMs', 'Open Source'],
+    featured: true,
+    githubUrl: 'https://github.com/aaryapatel09',
+  },
+  {
+    id: 'neurosim',
+    title: 'neurosim',
+    category: 'software',
+    description:
+      'Differentiable physics library covering classical mechanics, FDTD electromagnetics, quantum mechanics, and statistical mechanics — fully differentiable end-to-end. Enables inverse problem solving via autodiff.',
+    technologies: ['Python', 'JAX', 'Autodiff', 'Physics', 'Open Source'],
+    featured: true,
+    githubUrl: 'https://github.com/aaryapatel09',
+  },
+  {
+    id: 'vytus',
+    title: 'Vytus',
+    category: 'software',
+    description:
+      'Multimodal ML inference system (in Rust) with user-specific LoRA adapters across daily/weekly/monthly horizons, producing individual-level risk predictions from wearables, labs, vitals, nutrition, and behavioral signals. Includes a counterfactual prediction engine (/what-if) and a Temporal-orchestrated nightly personalization pipeline. Delaware C-Corp with HIPAA-compliant Postgres/Redis infrastructure.',
+    technologies: ['Rust', 'Multimodal ML', 'LoRA', 'Causal ML', 'Temporal', 'Postgres', 'Redis', 'HIPAA'],
+    featured: true,
+    githubUrl: 'https://vytus.health',
+  },
+  {
     id: '1',
     title: 'F1 Predictor',
     category: 'software',
